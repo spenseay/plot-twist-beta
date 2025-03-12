@@ -204,14 +204,14 @@
 
         .x-axis-start {
             left: 10px;
-            top: 40%; /* Position above the x-axis */
-            transform: translateY(-100%);
+            top: calc(50% - 25px); /* Explicitly position above X-axis */
+            transform: none;
         }
 
         .x-axis-end {
             right: 10px;
-            top: 40%; /* Position above the x-axis */
-            transform: translateY(-100%);
+            top: calc(50% - 25px); /* Explicitly position above X-axis */
+            transform: none;
         }
 
         .y-axis-start {
@@ -1466,26 +1466,76 @@
             // Make sure container is empty
             chartContainer.innerHTML = '';
             
-            // Add axis labels
-            const xAxisStart = document.createElement('div');
-            xAxisStart.className = 'axis-label x-axis-start';
-            xAxisStart.textContent = gameState.axes.x.start;
-            chartContainer.appendChild(xAxisStart);
-            
-            const xAxisEnd = document.createElement('div');
-            xAxisEnd.className = 'axis-label x-axis-end';
-            xAxisEnd.textContent = gameState.axes.x.end;
-            chartContainer.appendChild(xAxisEnd);
-            
-            const yAxisStart = document.createElement('div');
-            yAxisStart.className = 'axis-label y-axis-start';
-            yAxisStart.textContent = gameState.axes.y.start;
-            chartContainer.appendChild(yAxisStart);
-            
-            const yAxisEnd = document.createElement('div');
-            yAxisEnd.className = 'axis-label y-axis-end';
-            yAxisEnd.textContent = gameState.axes.y.end;
-            chartContainer.appendChild(yAxisEnd);
+                // Add axis labels with exact same positioning as game graph
+                const xAxisStart = document.createElement('div');
+                xAxisStart.className = 'axis-label';
+                xAxisStart.style.position = 'absolute';
+                xAxisStart.style.left = '10px';
+                xAxisStart.style.top = 'calc(50% - 25px)';
+                xAxisStart.style.maxWidth = '100px';
+                xAxisStart.style.textAlign = 'center';
+                xAxisStart.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+                xAxisStart.style.padding = '3px';
+                xAxisStart.style.borderRadius = '3px';
+                xAxisStart.style.fontSize = '12px';
+                xAxisStart.style.fontWeight = 'bold';
+                xAxisStart.style.color = '#4c2c69';
+                xAxisStart.style.zIndex = '5';
+                xAxisStart.textContent = gameState.axes.x.start;
+                chartContainer.appendChild(xAxisStart);
+                
+                const xAxisEnd = document.createElement('div');
+                xAxisEnd.className = 'axis-label';
+                xAxisEnd.style.position = 'absolute';
+                xAxisEnd.style.right = '10px';
+                xAxisEnd.style.top = 'calc(50% - 25px)';
+                xAxisEnd.style.maxWidth = '100px';
+                xAxisEnd.style.textAlign = 'center';
+                xAxisEnd.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+                xAxisEnd.style.padding = '3px';
+                xAxisEnd.style.borderRadius = '3px';
+                xAxisEnd.style.fontSize = '12px';
+                xAxisEnd.style.fontWeight = 'bold';
+                xAxisEnd.style.color = '#4c2c69';
+                xAxisEnd.style.zIndex = '5';
+                xAxisEnd.textContent = gameState.axes.x.end;
+                chartContainer.appendChild(xAxisEnd);
+                
+                const yAxisStart = document.createElement('div');
+                yAxisStart.className = 'axis-label';
+                yAxisStart.style.position = 'absolute';
+                yAxisStart.style.left = '50%';
+                yAxisStart.style.bottom = '10px';
+                yAxisStart.style.transform = 'translateX(-50%)';
+                yAxisStart.style.maxWidth = '100px';
+                yAxisStart.style.textAlign = 'center';
+                yAxisStart.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+                yAxisStart.style.padding = '3px';
+                yAxisStart.style.borderRadius = '3px';
+                yAxisStart.style.fontSize = '12px';
+                yAxisStart.style.fontWeight = 'bold';
+                yAxisStart.style.color = '#4c2c69';
+                yAxisStart.style.zIndex = '5';
+                yAxisStart.textContent = gameState.axes.y.start;
+                chartContainer.appendChild(yAxisStart);
+                
+                const yAxisEnd = document.createElement('div');
+                yAxisEnd.className = 'axis-label';
+                yAxisEnd.style.position = 'absolute';
+                yAxisEnd.style.left = '50%';
+                yAxisEnd.style.top = '10px';
+                yAxisEnd.style.transform = 'translateX(-50%)';
+                yAxisEnd.style.maxWidth = '100px';
+                yAxisEnd.style.textAlign = 'center';
+                yAxisEnd.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+                yAxisEnd.style.padding = '3px';
+                yAxisEnd.style.borderRadius = '3px';
+                yAxisEnd.style.fontSize = '12px';
+                yAxisEnd.style.fontWeight = 'bold';
+                yAxisEnd.style.color = '#4c2c69';
+                yAxisEnd.style.zIndex = '5';
+                yAxisEnd.textContent = gameState.axes.y.end;
+                chartContainer.appendChild(yAxisEnd);
             
             // Add axis arrows
             const xAxisArrow = document.createElement('div');
