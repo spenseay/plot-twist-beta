@@ -189,40 +189,41 @@
             border-radius: 4px;
         }
 
+        /* Axis labels with fixed positioning */
         .axis-label {
             position: absolute;
             font-weight: bold;
             color: #4c2c69;
             z-index: 5;
-            font-size: 12px; /* Smaller font for mobile */
+            font-size: 12px;
             padding: 3px;
-            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+            background-color: rgba(255, 255, 255, 0.7);
             border-radius: 3px;
             text-align: center;
-            max-width: 100px; /* Limit width of labels */
+            max-width: 100px;
         }
 
+        /* X axis labels - positioned clearly ABOVE the axis */
         .x-axis-start {
             left: 10px;
-            top: calc(50% - 25px); /* Explicitly position above X-axis */
-            transform: none;
+            bottom: calc(50% + 15px); /* Position above horizontal center */
         }
 
         .x-axis-end {
             right: 10px;
-            top: calc(50% - 25px); /* Explicitly position above X-axis */
-            transform: none;
+            bottom: calc(50% + 15px); /* Position above horizontal center */
         }
 
+        /* Y axis labels - positioned clearly outside the ends */
         .y-axis-start {
             left: 50%;
-            bottom: 10px; /* Position below the y-axis */
+            bottom: 5px; /* Position at bottom */
             transform: translateX(-50%);
         }
 
         .y-axis-end {
             left: 50%;
-            top: 10px; /* Position above the y-axis */
+            top: 5px; /* Position at top */
             transform: translateX(-50%);
         }
         
@@ -1466,12 +1467,12 @@
             // Make sure container is empty
             chartContainer.innerHTML = '';
             
-                // Add axis labels with exact same positioning as game graph
+                // Add axis labels with completely explicit positioning
                 const xAxisStart = document.createElement('div');
                 xAxisStart.className = 'axis-label';
                 xAxisStart.style.position = 'absolute';
                 xAxisStart.style.left = '10px';
-                xAxisStart.style.top = 'calc(50% - 25px)';
+                xAxisStart.style.bottom = 'calc(50% + 15px)'; // Position above horizontal center
                 xAxisStart.style.maxWidth = '100px';
                 xAxisStart.style.textAlign = 'center';
                 xAxisStart.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
@@ -1488,7 +1489,7 @@
                 xAxisEnd.className = 'axis-label';
                 xAxisEnd.style.position = 'absolute';
                 xAxisEnd.style.right = '10px';
-                xAxisEnd.style.top = 'calc(50% - 25px)';
+                xAxisEnd.style.bottom = 'calc(50% + 15px)'; // Position above horizontal center
                 xAxisEnd.style.maxWidth = '100px';
                 xAxisEnd.style.textAlign = 'center';
                 xAxisEnd.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
@@ -1505,7 +1506,7 @@
                 yAxisStart.className = 'axis-label';
                 yAxisStart.style.position = 'absolute';
                 yAxisStart.style.left = '50%';
-                yAxisStart.style.bottom = '10px';
+                yAxisStart.style.bottom = '5px';
                 yAxisStart.style.transform = 'translateX(-50%)';
                 yAxisStart.style.maxWidth = '100px';
                 yAxisStart.style.textAlign = 'center';
@@ -1523,7 +1524,7 @@
                 yAxisEnd.className = 'axis-label';
                 yAxisEnd.style.position = 'absolute';
                 yAxisEnd.style.left = '50%';
-                yAxisEnd.style.top = '10px';
+                yAxisEnd.style.top = '5px';
                 yAxisEnd.style.transform = 'translateX(-50%)';
                 yAxisEnd.style.maxWidth = '100px';
                 yAxisEnd.style.textAlign = 'center';
