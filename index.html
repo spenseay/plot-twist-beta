@@ -587,11 +587,54 @@
 
     // Example axis options
     const axisOptions = [
-      { start: "Tailgater", end: "Defensive Driver" },
-      { start: "Couch Potato", end: "Touches Grass" },
-      { start: "Lights Candles", end: "Lights Bonfires" },
-      { start: "Window Seat", end: "Aisle Seat" }
-      // ... add more if you like
+            { start: "High Five", end: "Fist Bump" },
+            { start: "Couch Potato", end: "Touches Grass" },
+            { start: "Lights Candles", end: "Lights Bonfires" },
+            { start: "Silent Sneezer", end: "Powerful Sneezer" },
+            { start: "Napkin User", end: "Sleeve Wiper" },
+            { start: "Shower Singer", end: "Shower Thinker" },
+            { start: "Spider Saver", end: "Spider Squisher" },
+            { start: "Movie Talker", end: "Shusher" },
+            { start: "Sock Shoe Sock Shoe", end: "Sock Sock Shoe Shoe" },
+            { start: "Bookworm", end: "Illiterate" },
+            { start: "Sells feet pics", end: "Buys feet pics" },
+            { start: "Predator", end: "Prey" },
+            { start: "Sugar Baby", end: "Sugar Daddy/Momma" },
+            { start: "Mountains", end: "Beach" },
+            { start: "Early Bird", end: "The Worm" },
+            { start: "Left on read", end: "Leaving Others On Read" },
+            { start: "Toilet Paper Folder", end: "Toilet Paper Crumbler" },
+            { start: "Window Seat", end: "Aisle Seat" },
+            { start: "One Tab Open", end: "100 Tabs Open" },
+            { start: "Instruction Reader", end: "Wings It" },
+            { start: "Menu Studier", end: "Panic Orderer" },
+            { start: "Punctual", end: "Fashionably Late" },
+            { start: "Single Alarm", end: "Snooze Abuser" },
+            { start: "Influencer", end: "Digital Detox" },
+            { start: "Cereal First", end: "Milk First" },
+            { start: "Boundary Setter", end: "Pushover" },
+            { start: "Conflict Avoidant", end: "Conflict Causer" },
+            { start: "Review Reader", end: "Impulse Buyer" },
+            { start: "Full Tank", end: "Rides on Empty" },
+            { start: "Matching Sock Seeker", end: "Any Two Will Do" },
+            { start: "Hard G in GIF", end: "Soft G in GIF" },
+            { start: "Tea Spiller", end: "Tea Drinker" },
+            { start: "Slow Eater", end: "Speed Inhaler" },
+            { start: "Fork and Knife Pizza", end: "Folded Slice" },
+            { start: "Umbrella Owner", end: "Soaked And Unprepared" },
+            { start: "Subtitles On", end: "Subtitles Off" },
+            { start: "Socks in Bed", end: "Barefoot Sleeper" },
+            { start: "Minimalist", end: "Maximalist" },
+            { start: "QWERTY Expert", end: "Touch Typer" },
+            { start: "Socks in Bed", end: "Barefoot Sleeper" },
+            { start: "Four Suitcases", end: "Just A Backpack" },
+            { start: "Front Row Sitter", end: "Back Row Hider" },
+            { start: "Tailgater", end: "Defensive Driver" },
+            { start: "Installs Updates", end: "'Remind Me Later'" },
+            { start: "Asks for Directions", end: "Drives in Circles" },
+            { start: "Natural Navigator", end: "Makes L with Fingers" },
+            { start: "Watch With Numbers", end: "Watch With Hands" },
+            { start: "Power Walker", end: "Stroller" }
     ];
 
     // Color palette
@@ -607,56 +650,20 @@
       '#c0e2bc'
     ];
 
-    // -- DOM elements --
-    const setupSection = document.getElementById('setup-section');
-    const gameSection = document.getElementById('game-section');
-    const finalScoresSection = document.getElementById('final-scores-section');
-    const playerNameInput = document.getElementById('player-name');
-    const addPlayerButton = document.getElementById('add-player');
-    const playersList = document.getElementById('players-list');
-    const startGameButton = document.getElementById('start-game');
-    const clearPlayersButton = document.getElementById('clear-players');
-    const turnIndicator = document.getElementById('turn-indicator');
-    const graphContainer = document.getElementById('graph-container');
-    const confirmPlacementButton = document.getElementById('confirm-placement');
-    const finalScoresTable = document.getElementById('final-scores-table');
-    const playAgainButton = document.getElementById('play-again');
-    const playerFilterButtons = document.getElementById('player-filter-buttons');
-    const pinsStatus = document.getElementById('pins-status');
-
-    // -- Utility: Adjust the Y-axis arrow so it stops below the top label and above the bottom label --
-    function adjustYAxisArrow(container) {
-      const yAxisEndLabel = container.querySelector('.y-axis-end');
-      const yAxisStartLabel = container.querySelector('.y-axis-start');
-      const yAxisArrow = container.querySelector('.y-axis-arrow');
-      if (!yAxisEndLabel || !yAxisStartLabel || !yAxisArrow) return;
-
-      // Let the DOM lay out first
-      requestAnimationFrame(() => {
-        const margin = 5; // extra spacing so arrow doesn't overlap text
-        const containerRect = container.getBoundingClientRect();
-        const endRect = yAxisEndLabel.getBoundingClientRect();
-        const startRect = yAxisStartLabel.getBoundingClientRect();
-
-        // Distance from container's top to bottom of top label
-        const arrowTop = (endRect.bottom - containerRect.top) + margin;
-
-        // Distance from container's bottom to top of bottom label
-        const arrowBottom = (containerRect.bottom - startRect.top) + margin;
-
-        // Set arrow line
-        yAxisArrow.style.top = arrowTop + 'px';
-        yAxisArrow.style.bottom = arrowBottom + 'px';
-      });
-    }
-
-    // -- Randomly pick two axes from axisOptions, maybe swapped --
-    function selectRandomAxes() {
+    // Randomize immediately when the script loads - this guarantees randomization on page refresh
+    function forceRandomizeAxes() {
+      // Create a new shuffled array from axisOptions
       const shuffled = [...axisOptions].sort(() => 0.5 - Math.random());
+      
+      // Pick the first two for X and Y
       const xAxis = shuffled[0];
-      const yAxis = shuffled[1];
+      const yAxis = shuffled[1] || shuffled[0]; // Fallback if we only have one option
+      
+      // 50/50 chance to flip the direction of each axis
       const xSwap = Math.random() > 0.5;
       const ySwap = Math.random() > 0.5;
+      
+      // Set the axes in gameState
       gameState.axes = {
         x: {
           start: xSwap ? xAxis.end : xAxis.start,
@@ -667,666 +674,741 @@
           end: ySwap ? yAxis.start : yAxis.end
         }
       };
+      
+      // Log to console for debugging
+      console.log("Axes randomized:", gameState.axes);
+      return gameState.axes;
+    }
+
+    // Force randomize on script load - this happens immediately
+    const initialAxes = forceRandomizeAxes();
+    
+    // -- DOM elements --
+    // Wait for DOM to be ready before trying to access elements
+    document.addEventListener('DOMContentLoaded', function() {
+      const setupSection = document.getElementById('setup-section');
+      const gameSection = document.getElementById('game-section');
+      const finalScoresSection = document.getElementById('final-scores-section');
+      const playerNameInput = document.getElementById('player-name');
+      const addPlayerButton = document.getElementById('add-player');
+      const playersList = document.getElementById('players-list');
+      const startGameButton = document.getElementById('start-game');
+      const clearPlayersButton = document.getElementById('clear-players');
+      const turnIndicator = document.getElementById('turn-indicator');
+      const graphContainer = document.getElementById('graph-container');
+      const confirmPlacementButton = document.getElementById('confirm-placement');
+      const finalScoresTable = document.getElementById('final-scores-table');
+      const playAgainButton = document.getElementById('play-again');
+      const playerFilterButtons = document.getElementById('player-filter-buttons');
+      const pinsStatus = document.getElementById('pins-status');
+      
+      // Update axis labels with the random values we set earlier
       updateAxisLabels();
-    }
-
-    // -- Update axis label text in both main chart & final chart if needed --
-    function updateAxisLabels() {
-      const xStartLabels = document.querySelectorAll('.x-axis-start');
-      const xEndLabels = document.querySelectorAll('.x-axis-end');
-      const yStartLabels = document.querySelectorAll('.y-axis-start');
-      const yEndLabels = document.querySelectorAll('.y-axis-end');
-      xStartLabels.forEach(lbl => lbl.textContent = gameState.axes.x.start);
-      xEndLabels.forEach(lbl => lbl.textContent = gameState.axes.x.end);
-      yStartLabels.forEach(lbl => lbl.textContent = gameState.axes.y.start);
-      yEndLabels.forEach(lbl => lbl.textContent = gameState.axes.y.end);
-    }
-
-    // -- Add a player --
-    function addPlayer() {
-      const playerName = playerNameInput.value.trim();
-      if (!playerName) {
-        alert('Please enter a player name.');
-        return;
-      }
-      if (gameState.players.includes(playerName)) {
-        alert('This player is already added.');
-        return;
-      }
-      gameState.players.push(playerName);
-      updatePlayersList();
-      playerNameInput.value = '';
-      playerNameInput.focus();
-      startGameButton.disabled = (gameState.players.length < 2);
-    }
-
-    // -- Update the list of players in the setup section --
-    function updatePlayersList() {
-      playersList.innerHTML = '';
-      gameState.players.forEach((player, idx) => {
-        const playerItem = document.createElement('div');
-        playerItem.className = 'player-item';
-        const playerNumber = document.createElement('div');
-        playerNumber.textContent = `${idx + 1}.`;
-        playerNumber.style.marginRight = '10px';
-        const playerNameSpan = document.createElement('span');
-        playerNameSpan.textContent = player;
-        const removeButton = document.createElement('button');
-        removeButton.textContent = 'Remove';
-        removeButton.className = 'secondary';
-        removeButton.style.padding = '5px 10px';
-        removeButton.onclick = () => {
-          gameState.players.splice(idx, 1);
-          updatePlayersList();
-          startGameButton.disabled = (gameState.players.length < 2);
-        };
-        playerItem.appendChild(playerNumber);
-        playerItem.appendChild(playerNameSpan);
-        playerItem.appendChild(removeButton);
-        playersList.appendChild(playerItem);
-      });
-    }
-
-    // -- Start the game --
-    function startGame() {
-      setupSection.style.display = 'none';
-      gameSection.style.display = 'block';
-      // Initialize placements
-      gameState.placements = {};
-      gameState.players.forEach(p => { gameState.placements[p] = {}; });
-      // Pick random axes
-      selectRandomAxes();
-      // Start turn
-      gameState.currentTurn = 0;
-      startPlayerTurn();
-    }
-
-    // -- Begin a player's turn --
-    function startPlayerTurn() {
-      const currentPlayer = gameState.players[gameState.currentTurn];
-      turnIndicator.textContent = `${currentPlayer}'s Turn`;
-      // Remove old pins
-      document.querySelectorAll('.pin').forEach(pin => pin.remove());
-      nextZIndex = 100;
-      // Create a pin for each player
-      gameState.players.forEach((p, i) => createPin(p, i));
-      // Initially disable confirm
-      updateConfirmButtonState();
-      // Adjust the y-axis arrow after pins & labels are in place
+      
+      // Adjust the y-axis arrow now that DOM is loaded
       adjustYAxisArrow(graphContainer);
-    }
+    
+      // -- Utility: Adjust the Y-axis arrow so it stops below the top label and above the bottom label --
+      function adjustYAxisArrow(container) {
+        const yAxisEndLabel = container.querySelector('.y-axis-end');
+        const yAxisStartLabel = container.querySelector('.y-axis-start');
+        const yAxisArrow = container.querySelector('.y-axis-arrow');
+        if (!yAxisEndLabel || !yAxisStartLabel || !yAxisArrow) return;
 
-    // -- Create a draggable pin for a given player name & color index --
-    function createPin(player, index) {
-      const pinsContainer = document.getElementById('pins-container');
-      const pin = document.createElement('div');
-      pin.className = 'pin';
-      pin.textContent = player;
-      pin.setAttribute('data-player', player);
-      pin.setAttribute('data-placed', 'false');
-      const color = playerColors[index % playerColors.length];
-      pin.style.backgroundColor = color;
-      // Decide text color
-      if (getContrastYIQ(color) < 128) {
-        pin.style.color = 'white';
-      } else {
-        pin.style.color = '#4c2c69';
-      }
-      // Draggable events
-      pin.onmousedown = dragStart;
-      pin.ontouchstart = touchStart;
-      pin.addEventListener('click', () => bringPinToFront(pin));
-      // Place in container initially
-      pinsContainer.appendChild(pin);
-    }
+        // Let the DOM lay out first
+        requestAnimationFrame(() => {
+          const margin = 5; // extra spacing so arrow doesn't overlap text
+          const containerRect = container.getBoundingClientRect();
+          const endRect = yAxisEndLabel.getBoundingClientRect();
+          const startRect = yAxisStartLabel.getBoundingClientRect();
 
-    // -- Bring pin to top --
-    function bringPinToFront(pin) {
-      nextZIndex++;
-      pin.style.zIndex = nextZIndex;
-    }
+          // Distance from container's top to bottom of top label
+          const arrowTop = (endRect.bottom - containerRect.top) + margin;
 
-    // -- Check if all pins are placed --
-    function updateConfirmButtonState() {
-      const pins = document.querySelectorAll('.pin');
-      let allPlaced = true;
-      let placedCount = 0;
-      pins.forEach(pin => {
-        if (pin.getAttribute('data-placed') === 'false') {
-          allPlaced = false;
-        } else {
-          placedCount++;
-        }
-      });
-      confirmPlacementButton.disabled = !allPlaced;
-      if (allPlaced) {
-        pinsStatus.textContent = 'All pins placed! You can now confirm.';
-        pinsStatus.className = 'pins-status all-placed';
-      } else {
-        pinsStatus.textContent =
-          `Placed ${placedCount} of ${pins.length} pins. Please place all pins on the chart.`;
-        pinsStatus.className = 'pins-status';
-      }
-    }
+          // Distance from container's bottom to top of bottom label
+          const arrowBottom = (containerRect.bottom - startRect.top) + margin;
 
-    // -- Dragging logic (mouse) --
-    let activeDragPin = null;
-    function dragStart(e) {
-      e.preventDefault();
-      activeDragPin = e.target;
-      activeDragPin.classList.add('dragging');
-      bringPinToFront(activeDragPin);
-      // If not placed, move from pins container -> graph container
-      if (activeDragPin.getAttribute('data-placed') === 'false') {
-        const pinStyle = window.getComputedStyle(activeDragPin);
-        const w = pinStyle.width;
-        const h = pinStyle.height;
-        activeDragPin.parentNode.removeChild(activeDragPin);
-        graphContainer.appendChild(activeDragPin);
-        const rect = graphContainer.getBoundingClientRect();
-        const pinX = e.clientX - rect.left;
-        const pinY = e.clientY - rect.top;
-        activeDragPin.style.position = 'absolute';
-        activeDragPin.style.left = pinX + 'px';
-        activeDragPin.style.top = pinY + 'px';
-        activeDragPin.style.transform = 'translate(-50%,-50%)';
-        activeDragPin.style.width = w;
-        activeDragPin.style.height = h;
-      }
-      document.addEventListener('mousemove', dragMove);
-      document.addEventListener('mouseup', dragEnd);
-    }
-    function dragMove(e) {
-      if (!activeDragPin) return;
-      const rect = graphContainer.getBoundingClientRect();
-      let newX = e.clientX - rect.left;
-      let newY = e.clientY - rect.top;
-      if (activeDragPin.getAttribute('data-placed') === 'true') {
-        newX = Math.max(0, Math.min(newX, rect.width));
-        newY = Math.max(0, Math.min(newY, rect.height));
-      } else {
-        if (newX >= 0 && newX <= rect.width && newY >= 0 && newY <= rect.height) {
-          activeDragPin.setAttribute('data-placed','true');
-          updateConfirmButtonState();
-        }
-      }
-      activeDragPin.style.left = newX + 'px';
-      activeDragPin.style.top = newY + 'px';
-    }
-    function dragEnd() {
-      if (!activeDragPin) return;
-      activeDragPin.classList.remove('dragging');
-      const rect = graphContainer.getBoundingClientRect();
-      const pinLeft = parseFloat(activeDragPin.style.left);
-      const pinTop = parseFloat(activeDragPin.style.top);
-      const outside = (pinLeft<0 || pinLeft>rect.width || pinTop<0 || pinTop>rect.height);
-      if (outside && activeDragPin.getAttribute('data-placed') === 'false') {
-        graphContainer.removeChild(activeDragPin);
-        activeDragPin.style.position = '';
-        activeDragPin.style.left = '';
-        activeDragPin.style.top = '';
-        activeDragPin.style.transform = '';
-        document.getElementById('pins-container').appendChild(activeDragPin);
-      }
-      activeDragPin = null;
-      document.removeEventListener('mousemove', dragMove);
-      document.removeEventListener('mouseup', dragEnd);
-    }
-
-    // -- Touch logic (mobile) --
-    function touchStart(e) {
-      if (e.touches.length !== 1) return;
-      e.preventDefault();
-      activeDragPin = e.target;
-      activeDragPin.classList.add('dragging');
-      bringPinToFront(activeDragPin);
-      if (activeDragPin.getAttribute('data-placed') === 'false') {
-        const pinStyle = window.getComputedStyle(activeDragPin);
-        const w = pinStyle.width;
-        const h = pinStyle.height;
-        activeDragPin.parentNode.removeChild(activeDragPin);
-        graphContainer.appendChild(activeDragPin);
-        const rect = graphContainer.getBoundingClientRect();
-        const pinX = e.touches[0].clientX - rect.left;
-        const pinY = e.touches[0].clientY - rect.top;
-        activeDragPin.style.position = 'absolute';
-        activeDragPin.style.left = pinX + 'px';
-        activeDragPin.style.top = pinY + 'px';
-        activeDragPin.style.transform = 'translate(-50%,-50%)';
-        activeDragPin.style.width = w;
-        activeDragPin.style.height = h;
-      }
-      document.addEventListener('touchmove', touchMove, { passive: false });
-      document.addEventListener('touchend', touchEnd);
-    }
-    function touchMove(e) {
-      e.preventDefault();
-      if (!activeDragPin || e.touches.length !== 1) return;
-      const rect = graphContainer.getBoundingClientRect();
-      let newX = e.touches[0].clientX - rect.left;
-      let newY = e.touches[0].clientY - rect.top;
-      if (activeDragPin.getAttribute('data-placed') === 'true') {
-        newX = Math.max(0, Math.min(newX, rect.width));
-        newY = Math.max(0, Math.min(newY, rect.height));
-      } else {
-        if (newX>=0 && newX<=rect.width && newY>=0 && newY<=rect.height) {
-          activeDragPin.setAttribute('data-placed','true');
-          updateConfirmButtonState();
-        }
-      }
-      activeDragPin.style.left = newX + 'px';
-      activeDragPin.style.top = newY + 'px';
-    }
-    function touchEnd() {
-      if (!activeDragPin) return;
-      activeDragPin.classList.remove('dragging');
-      const rect = graphContainer.getBoundingClientRect();
-      const pinLeft = parseFloat(activeDragPin.style.left);
-      const pinTop = parseFloat(activeDragPin.style.top);
-      const outside = (pinLeft<0 || pinLeft>rect.width || pinTop<0 || pinTop>rect.height);
-      if (outside && activeDragPin.getAttribute('data-placed')==='false') {
-        graphContainer.removeChild(activeDragPin);
-        activeDragPin.style.position = '';
-        activeDragPin.style.left = '';
-        activeDragPin.style.top = '';
-        activeDragPin.style.transform = '';
-        document.getElementById('pins-container').appendChild(activeDragPin);
-      }
-      activeDragPin = null;
-      document.removeEventListener('touchmove', touchMove);
-      document.removeEventListener('touchend', touchEnd);
-    }
-
-    // -- Confirm placement for current turn --
-    function confirmPlacement() {
-      const currentPlayer = gameState.players[gameState.currentTurn];
-      const placements = {};
-      const rect = graphContainer.getBoundingClientRect();
-      document.querySelectorAll('.pin').forEach(pin => {
-        const p = pin.getAttribute('data-player');
-        const x = parseFloat(pin.style.left) / rect.width;
-        const y = parseFloat(pin.style.top) / rect.height;
-        placements[p] = { x, y };
-      });
-      gameState.placements[currentPlayer] = placements;
-      gameState.currentTurn++;
-      if (gameState.currentTurn < gameState.players.length) {
-        startPlayerTurn();
-      } else {
-        showFinalScores();
-      }
-    }
-
-    // -- Calculate final scores --
-    function calculateFinalScores() {
-      const scores = {};
-      gameState.players.forEach(p => scores[p] = 0);
-      gameState.players.forEach(person => {
-        const selfPlacement = gameState.placements[person][person];
-        gameState.players.forEach(player => {
-          if (player===person) return;
-          const placement = gameState.placements[player][person];
-          const dist = calculateDistance(selfPlacement, placement);
-          const maxDist = Math.sqrt(2);
-          const sc = Math.max(0, Math.round(100 - (dist/maxDist)*100));
-          scores[player] += sc;
+          // Set arrow line
+          yAxisArrow.style.top = arrowTop + 'px';
+          yAxisArrow.style.bottom = arrowBottom + 'px';
         });
-      });
-      return scores;
-    }
+      }
 
-    // -- Show final scores & the final chart --
-    function showFinalScores() {
-      gameSection.style.display = 'none';
-      finalScoresSection.style.display = 'block';
-      gameState.selectedFilter = 'all';
+      // -- Wrapper for selectRandomAxes that ensures the DOM is updated --
+      function selectRandomAxes() {
+        forceRandomizeAxes();
+        updateAxisLabels();
+        
+        // Let the DOM update, then fix the arrow
+        setTimeout(() => {
+          adjustYAxisArrow(graphContainer);
+        }, 0);
+      }
 
-      const scores = calculateFinalScores();
-      const sorted = Object.entries(scores)
-        .map(([player,score]) => ({ player, score }))
-        .sort((a,b) => b.score - a.score);
+      // -- Update axis label text in both main chart & final chart if needed --
+      function updateAxisLabels() {
+        const xStartLabels = document.querySelectorAll('.x-axis-start');
+        const xEndLabels = document.querySelectorAll('.x-axis-end');
+        const yStartLabels = document.querySelectorAll('.y-axis-start');
+        const yEndLabels = document.querySelectorAll('.y-axis-end');
+        
+        // Update all axis labels with current gameState values
+        xStartLabels.forEach(lbl => lbl.textContent = gameState.axes.x.start);
+        xEndLabels.forEach(lbl => lbl.textContent = gameState.axes.x.end);
+        yStartLabels.forEach(lbl => lbl.textContent = gameState.axes.y.start);
+        yEndLabels.forEach(lbl => lbl.textContent = gameState.axes.y.end);
+      }
 
-      // Build table
-      const table = document.createElement('table');
-      const header = document.createElement('tr');
-      const rankTh = document.createElement('th');
-      rankTh.textContent = 'Rank';
-      const playerTh = document.createElement('th');
-      playerTh.textContent = 'Player';
-      const scoreTh = document.createElement('th');
-      scoreTh.textContent = 'Score';
-      header.appendChild(rankTh);
-      header.appendChild(playerTh);
-      header.appendChild(scoreTh);
-      table.appendChild(header);
-
-      sorted.forEach((item, i) => {
-        const row = document.createElement('tr');
-        if (i===0) row.classList.add('winner');
-        const rankTd = document.createElement('td');
-        rankTd.textContent = i+1;
-        const playerTd = document.createElement('td');
-        playerTd.textContent = item.player;
-        const scoreTd = document.createElement('td');
-        scoreTd.textContent = item.score + ' points';
-        row.appendChild(rankTd);
-        row.appendChild(playerTd);
-        row.appendChild(scoreTd);
-        table.appendChild(row);
-      });
-
-      finalScoresTable.innerHTML = '';
-      finalScoresTable.appendChild(table);
-
-      const winner = sorted[0];
-      const winnerAnnouncement = document.createElement('div');
-      winnerAnnouncement.style.textAlign = 'center';
-      winnerAnnouncement.style.fontSize = '18px';
-      winnerAnnouncement.style.margin = '15px 0';
-      winnerAnnouncement.innerHTML =
-        `<strong>${winner.player}</strong> knows their friends best with ${winner.score} points!`;
-      finalScoresTable.appendChild(winnerAnnouncement);
-
-      // Build filter buttons
-      createPlayerFilterButtons();
-      // Build final chart
-      createCollectivePlacementsChart();
-    }
-
-    // -- Create player filter buttons --
-    function createPlayerFilterButtons() {
-      playerFilterButtons.innerHTML = '';
-      const allButton = document.createElement('div');
-      allButton.className = 'player-filter-button all-button' +
-        (gameState.selectedFilter==='all' ? ' active' : '');
-      allButton.textContent = 'All';
-      allButton.onclick = () => {
-        gameState.selectedFilter = 'all';
-        updatePlayerFilterButtons();
-        createCollectivePlacementsChart();
-      };
-      playerFilterButtons.appendChild(allButton);
-
-      gameState.players.forEach((p, i) => {
-        const btn = document.createElement('div');
-        btn.className = 'player-filter-button' +
-          (gameState.selectedFilter===p ? ' active':'');
-        btn.textContent = p;
-        const c = playerColors[i % playerColors.length];
-        btn.style.backgroundColor = c;
-        if (getContrastYIQ(c) < 128) {
-          btn.style.color = 'white';
-        } else {
-          btn.style.color = '#4c2c69';
+      // -- Add a player --
+      function addPlayer() {
+        const playerName = playerNameInput.value.trim();
+        if (!playerName) {
+          alert('Please enter a player name.');
+          return;
         }
-        btn.onclick = () => {
-          gameState.selectedFilter = p;
+        if (gameState.players.includes(playerName)) {
+          alert('This player is already added.');
+          return;
+        }
+        gameState.players.push(playerName);
+        updatePlayersList();
+        playerNameInput.value = '';
+        playerNameInput.focus();
+        startGameButton.disabled = (gameState.players.length < 2);
+      }
+
+      // -- Update the list of players in the setup section --
+      function updatePlayersList() {
+        playersList.innerHTML = '';
+        gameState.players.forEach((player, idx) => {
+          const playerItem = document.createElement('div');
+          playerItem.className = 'player-item';
+          const playerNumber = document.createElement('div');
+          playerNumber.textContent = `${idx + 1}.`;
+          playerNumber.style.marginRight = '10px';
+          const playerNameSpan = document.createElement('span');
+          playerNameSpan.textContent = player;
+          const removeButton = document.createElement('button');
+          removeButton.textContent = 'Remove';
+          removeButton.className = 'secondary';
+          removeButton.style.padding = '5px 10px';
+          removeButton.onclick = () => {
+            gameState.players.splice(idx, 1);
+            updatePlayersList();
+            startGameButton.disabled = (gameState.players.length < 2);
+          };
+          playerItem.appendChild(playerNumber);
+          playerItem.appendChild(playerNameSpan);
+          playerItem.appendChild(removeButton);
+          playersList.appendChild(playerItem);
+        });
+      }
+
+      // -- Start the game --
+      function startGame() {
+        setupSection.style.display = 'none';
+        gameSection.style.display = 'block';
+        // Initialize placements
+        gameState.placements = {};
+        gameState.players.forEach(p => { gameState.placements[p] = {}; });
+        // Make sure we pick random axes for the game
+        selectRandomAxes();
+        // Start turn
+        gameState.currentTurn = 0;
+        startPlayerTurn();
+      }
+
+      // -- Begin a player's turn --
+      function startPlayerTurn() {
+        const currentPlayer = gameState.players[gameState.currentTurn];
+        turnIndicator.textContent = `${currentPlayer}'s Turn`;
+        // Remove old pins
+        document.querySelectorAll('.pin').forEach(pin => pin.remove());
+        nextZIndex = 100;
+        // Create a pin for each player
+        gameState.players.forEach((p, i) => createPin(p, i));
+        // Initially disable confirm
+        updateConfirmButtonState();
+        // Adjust the y-axis arrow after pins & labels are in place
+        adjustYAxisArrow(graphContainer);
+      }
+
+      // -- Create a draggable pin for a given player name & color index --
+      function createPin(player, index) {
+        const pinsContainer = document.getElementById('pins-container');
+        const pin = document.createElement('div');
+        pin.className = 'pin';
+        pin.textContent = player;
+        pin.setAttribute('data-player', player);
+        pin.setAttribute('data-placed', 'false');
+        const color = playerColors[index % playerColors.length];
+        pin.style.backgroundColor = color;
+        // Decide text color
+        if (getContrastYIQ(color) < 128) {
+          pin.style.color = 'white';
+        } else {
+          pin.style.color = '#4c2c69';
+        }
+        // Draggable events
+        pin.onmousedown = dragStart;
+        pin.ontouchstart = touchStart;
+        pin.addEventListener('click', () => bringPinToFront(pin));
+        // Place in container initially
+        pinsContainer.appendChild(pin);
+      }
+
+      // -- Bring pin to top --
+      function bringPinToFront(pin) {
+        nextZIndex++;
+        pin.style.zIndex = nextZIndex;
+      }
+
+      // -- Check if all pins are placed --
+      function updateConfirmButtonState() {
+        const pins = document.querySelectorAll('.pin');
+        let allPlaced = true;
+        let placedCount = 0;
+        pins.forEach(pin => {
+          if (pin.getAttribute('data-placed') === 'false') {
+            allPlaced = false;
+          } else {
+            placedCount++;
+          }
+        });
+        confirmPlacementButton.disabled = !allPlaced;
+        if (allPlaced) {
+          pinsStatus.textContent = 'All pins placed! You can now confirm.';
+          pinsStatus.className = 'pins-status all-placed';
+        } else {
+          pinsStatus.textContent =
+            `Placed ${placedCount} of ${pins.length} pins. Please place all pins on the chart.`;
+          pinsStatus.className = 'pins-status';
+        }
+      }
+
+      // -- Dragging logic (mouse) --
+      let activeDragPin = null;
+      function dragStart(e) {
+        e.preventDefault();
+        activeDragPin = e.target;
+        activeDragPin.classList.add('dragging');
+        bringPinToFront(activeDragPin);
+        // If not placed, move from pins container -> graph container
+        if (activeDragPin.getAttribute('data-placed') === 'false') {
+          const pinStyle = window.getComputedStyle(activeDragPin);
+          const w = pinStyle.width;
+          const h = pinStyle.height;
+          activeDragPin.parentNode.removeChild(activeDragPin);
+          graphContainer.appendChild(activeDragPin);
+          const rect = graphContainer.getBoundingClientRect();
+          const pinX = e.clientX - rect.left;
+          const pinY = e.clientY - rect.top;
+          activeDragPin.style.position = 'absolute';
+          activeDragPin.style.left = pinX + 'px';
+          activeDragPin.style.top = pinY + 'px';
+          activeDragPin.style.transform = 'translate(-50%,-50%)';
+          activeDragPin.style.width = w;
+          activeDragPin.style.height = h;
+        }
+        document.addEventListener('mousemove', dragMove);
+        document.addEventListener('mouseup', dragEnd);
+      }
+      function dragMove(e) {
+        if (!activeDragPin) return;
+        const rect = graphContainer.getBoundingClientRect();
+        let newX = e.clientX - rect.left;
+        let newY = e.clientY - rect.top;
+        if (activeDragPin.getAttribute('data-placed') === 'true') {
+          newX = Math.max(0, Math.min(newX, rect.width));
+          newY = Math.max(0, Math.min(newY, rect.height));
+        } else {
+          if (newX >= 0 && newX <= rect.width && newY >= 0 && newY <= rect.height) {
+            activeDragPin.setAttribute('data-placed','true');
+            updateConfirmButtonState();
+          }
+        }
+        activeDragPin.style.left = newX + 'px';
+        activeDragPin.style.top = newY + 'px';
+      }
+      function dragEnd() {
+        if (!activeDragPin) return;
+        activeDragPin.classList.remove('dragging');
+        const rect = graphContainer.getBoundingClientRect();
+        const pinLeft = parseFloat(activeDragPin.style.left);
+        const pinTop = parseFloat(activeDragPin.style.top);
+        const outside = (pinLeft<0 || pinLeft>rect.width || pinTop<0 || pinTop>rect.height);
+        if (outside && activeDragPin.getAttribute('data-placed') === 'false') {
+          graphContainer.removeChild(activeDragPin);
+          activeDragPin.style.position = '';
+          activeDragPin.style.left = '';
+          activeDragPin.style.top = '';
+          activeDragPin.style.transform = '';
+          document.getElementById('pins-container').appendChild(activeDragPin);
+        }
+        activeDragPin = null;
+        document.removeEventListener('mousemove', dragMove);
+        document.removeEventListener('mouseup', dragEnd);
+      }
+
+      // -- Touch logic (mobile) --
+      function touchStart(e) {
+        if (e.touches.length !== 1) return;
+        e.preventDefault();
+        activeDragPin = e.target;
+        activeDragPin.classList.add('dragging');
+        bringPinToFront(activeDragPin);
+        if (activeDragPin.getAttribute('data-placed') === 'false') {
+          const pinStyle = window.getComputedStyle(activeDragPin);
+          const w = pinStyle.width;
+          const h = pinStyle.height;
+          activeDragPin.parentNode.removeChild(activeDragPin);
+          graphContainer.appendChild(activeDragPin);
+          const rect = graphContainer.getBoundingClientRect();
+          const pinX = e.touches[0].clientX - rect.left;
+          const pinY = e.touches[0].clientY - rect.top;
+          activeDragPin.style.position = 'absolute';
+          activeDragPin.style.left = pinX + 'px';
+          activeDragPin.style.top = pinY + 'px';
+          activeDragPin.style.transform = 'translate(-50%,-50%)';
+          activeDragPin.style.width = w;
+          activeDragPin.style.height = h;
+        }
+        document.addEventListener('touchmove', touchMove, { passive: false });
+        document.addEventListener('touchend', touchEnd);
+      }
+      function touchMove(e) {
+        e.preventDefault();
+        if (!activeDragPin || e.touches.length !== 1) return;
+        const rect = graphContainer.getBoundingClientRect();
+        let newX = e.touches[0].clientX - rect.left;
+        let newY = e.touches[0].clientY - rect.top;
+        if (activeDragPin.getAttribute('data-placed') === 'true') {
+          newX = Math.max(0, Math.min(newX, rect.width));
+          newY = Math.max(0, Math.min(newY, rect.height));
+        } else {
+          if (newX>=0 && newX<=rect.width && newY>=0 && newY<=rect.height) {
+            activeDragPin.setAttribute('data-placed','true');
+            updateConfirmButtonState();
+          }
+        }
+        activeDragPin.style.left = newX + 'px';
+        activeDragPin.style.top = newY + 'px';
+      }
+      function touchEnd() {
+        if (!activeDragPin) return;
+        activeDragPin.classList.remove('dragging');
+        const rect = graphContainer.getBoundingClientRect();
+        const pinLeft = parseFloat(activeDragPin.style.left);
+        const pinTop = parseFloat(activeDragPin.style.top);
+        const outside = (pinLeft<0 || pinLeft>rect.width || pinTop<0 || pinTop>rect.height);
+        if (outside && activeDragPin.getAttribute('data-placed')==='false') {
+          graphContainer.removeChild(activeDragPin);
+          activeDragPin.style.position = '';
+          activeDragPin.style.left = '';
+          activeDragPin.style.top = '';
+          activeDragPin.style.transform = '';
+          document.getElementById('pins-container').appendChild(activeDragPin);
+        }
+        activeDragPin = null;
+        document.removeEventListener('touchmove', touchMove);
+        document.removeEventListener('touchend', touchEnd);
+      }
+
+      // -- Confirm placement for current turn --
+      function confirmPlacement() {
+        const currentPlayer = gameState.players[gameState.currentTurn];
+        const placements = {};
+        const rect = graphContainer.getBoundingClientRect();
+        document.querySelectorAll('.pin').forEach(pin => {
+          const p = pin.getAttribute('data-player');
+          const x = parseFloat(pin.style.left) / rect.width;
+          const y = parseFloat(pin.style.top) / rect.height;
+          placements[p] = { x, y };
+        });
+        gameState.placements[currentPlayer] = placements;
+        gameState.currentTurn++;
+        if (gameState.currentTurn < gameState.players.length) {
+          startPlayerTurn();
+        } else {
+          showFinalScores();
+        }
+      }
+
+      // -- Calculate final scores --
+      function calculateFinalScores() {
+        const scores = {};
+        gameState.players.forEach(p => scores[p] = 0);
+        gameState.players.forEach(person => {
+          const selfPlacement = gameState.placements[person][person];
+          gameState.players.forEach(player => {
+            if (player===person) return;
+            const placement = gameState.placements[player][person];
+            const dist = calculateDistance(selfPlacement, placement);
+            const maxDist = Math.sqrt(2);
+            const sc = Math.max(0, Math.round(100 - (dist/maxDist)*100));
+            scores[player] += sc;
+          });
+        });
+        return scores;
+      }
+
+      // -- Show final scores & the final chart --
+      function showFinalScores() {
+        gameSection.style.display = 'none';
+        finalScoresSection.style.display = 'block';
+        gameState.selectedFilter = 'all';
+
+        const scores = calculateFinalScores();
+        const sorted = Object.entries(scores)
+          .map(([player,score]) => ({ player, score }))
+          .sort((a,b) => b.score - a.score);
+
+        // Build table
+        const table = document.createElement('table');
+        const header = document.createElement('tr');
+        const rankTh = document.createElement('th');
+        rankTh.textContent = 'Rank';
+        const playerTh = document.createElement('th');
+        playerTh.textContent = 'Player';
+        const scoreTh = document.createElement('th');
+        scoreTh.textContent = 'Score';
+        header.appendChild(rankTh);
+        header.appendChild(playerTh);
+        header.appendChild(scoreTh);
+        table.appendChild(header);
+
+        sorted.forEach((item, i) => {
+          const row = document.createElement('tr');
+          if (i===0) row.classList.add('winner');
+          const rankTd = document.createElement('td');
+          rankTd.textContent = i+1;
+          const playerTd = document.createElement('td');
+          playerTd.textContent = item.player;
+          const scoreTd = document.createElement('td');
+          scoreTd.textContent = item.score + ' points';
+          row.appendChild(rankTd);
+          row.appendChild(playerTd);
+          row.appendChild(scoreTd);
+          table.appendChild(row);
+        });
+
+        finalScoresTable.innerHTML = '';
+        finalScoresTable.appendChild(table);
+
+        const winner = sorted[0];
+        const winnerAnnouncement = document.createElement('div');
+        winnerAnnouncement.style.textAlign = 'center';
+        winnerAnnouncement.style.fontSize = '18px';
+        winnerAnnouncement.style.margin = '15px 0';
+        winnerAnnouncement.innerHTML =
+          `<strong>${winner.player}</strong> knows their friends best with ${winner.score} points!`;
+        finalScoresTable.appendChild(winnerAnnouncement);
+
+        // Build filter buttons
+        createPlayerFilterButtons();
+        // Build final chart
+        createCollectivePlacementsChart();
+      }
+
+      // -- Create player filter buttons --
+      function createPlayerFilterButtons() {
+        playerFilterButtons.innerHTML = '';
+        const allButton = document.createElement('div');
+        allButton.className = 'player-filter-button all-button' +
+          (gameState.selectedFilter==='all' ? ' active' : '');
+        allButton.textContent = 'All';
+        allButton.onclick = () => {
+          gameState.selectedFilter = 'all';
           updatePlayerFilterButtons();
           createCollectivePlacementsChart();
         };
-        playerFilterButtons.appendChild(btn);
-      });
-    }
-    function updatePlayerFilterButtons() {
-      const buttons = playerFilterButtons.querySelectorAll('.player-filter-button');
-      buttons.forEach(b => {
-        const isAll = b.classList.contains('all-button');
-        const active = (isAll && gameState.selectedFilter==='all') ||
-                       (!isAll && b.textContent===gameState.selectedFilter);
-        if (active) b.classList.add('active');
-        else b.classList.remove('active');
-      });
-    }
+        playerFilterButtons.appendChild(allButton);
 
-    // -- Create the final results chart with dynamic y-axis arrow as well --
-    function createCollectivePlacementsChart() {
-      const container = document.getElementById('collective-placements-container');
-      container.innerHTML = '';
-      nextZIndex = 100;
+        gameState.players.forEach((p, i) => {
+          const btn = document.createElement('div');
+          btn.className = 'player-filter-button' +
+            (gameState.selectedFilter===p ? ' active':'');
+          btn.textContent = p;
+          const c = playerColors[i % playerColors.length];
+          btn.style.backgroundColor = c;
+          if (getContrastYIQ(c) < 128) {
+            btn.style.color = 'white';
+          } else {
+            btn.style.color = '#4c2c69';
+          }
+          btn.onclick = () => {
+            gameState.selectedFilter = p;
+            updatePlayerFilterButtons();
+            createCollectivePlacementsChart();
+          };
+          playerFilterButtons.appendChild(btn);
+        });
+      }
+      function updatePlayerFilterButtons() {
+        const buttons = playerFilterButtons.querySelectorAll('.player-filter-button');
+        buttons.forEach(b => {
+          const isAll = b.classList.contains('all-button');
+          const active = (isAll && gameState.selectedFilter==='all') ||
+                        (!isAll && b.textContent===gameState.selectedFilter);
+          if (active) b.classList.add('active');
+          else b.classList.remove('active');
+        });
+      }
 
-      const chartTitle = document.createElement('h3');
-      chartTitle.textContent = 'Player Placement Map';
-      chartTitle.style.textAlign = 'center';
-      chartTitle.style.marginBottom = '15px';
-      chartTitle.style.color = '#4c2c69';
-      container.appendChild(chartTitle);
+      // -- Create the final results chart with dynamic y-axis arrow as well --
+      function createCollectivePlacementsChart() {
+        const container = document.getElementById('collective-placements-container');
+        container.innerHTML = '';
+        nextZIndex = 100;
 
-      // Make a chart container
-      const chartContainer = document.createElement('div');
-      chartContainer.style.position = 'relative';
-      chartContainer.style.width = '100%';
-      chartContainer.style.maxWidth = '350px';
-      chartContainer.style.aspectRatio = '1 / 1';
-      chartContainer.style.margin = '0 auto';
-      chartContainer.style.border = '2px solid #4c2c69';
-      chartContainer.style.borderRadius = '4px';
-      chartContainer.style.backgroundColor = 'white';
+        const chartTitle = document.createElement('h3');
+        chartTitle.textContent = 'Player Placement Map';
+        chartTitle.style.textAlign = 'center';
+        chartTitle.style.marginBottom = '15px';
+        chartTitle.style.color = '#4c2c69';
+        container.appendChild(chartTitle);
 
-      // X axis labels
-      const xAxisStart = document.createElement('div');
-      xAxisStart.className = 'axis-label x-axis-start';
-      xAxisStart.style.left = '10px';
-      xAxisStart.style.bottom = 'calc(50% + 15px)';
-      xAxisStart.textContent = gameState.axes.x.start;
-      chartContainer.appendChild(xAxisStart);
+        // Make a chart container
+        const chartContainer = document.createElement('div');
+        chartContainer.style.position = 'relative';
+        chartContainer.style.width = '100%';
+        chartContainer.style.maxWidth = '350px';
+        chartContainer.style.aspectRatio = '1 / 1';
+        chartContainer.style.margin = '0 auto';
+        chartContainer.style.border = '2px solid #4c2c69';
+        chartContainer.style.borderRadius = '4px';
+        chartContainer.style.backgroundColor = 'white';
 
-      const xAxisEnd = document.createElement('div');
-      xAxisEnd.className = 'axis-label x-axis-end';
-      xAxisEnd.style.right = '10px';
-      xAxisEnd.style.bottom = 'calc(50% + 15px)';
-      xAxisEnd.textContent = gameState.axes.x.end;
-      chartContainer.appendChild(xAxisEnd);
+        // X axis labels
+        const xAxisStart = document.createElement('div');
+        xAxisStart.className = 'axis-label x-axis-start';
+        xAxisStart.style.left = '10px';
+        xAxisStart.style.bottom = 'calc(50% + 15px)';
+        xAxisStart.textContent = gameState.axes.x.start;
+        chartContainer.appendChild(xAxisStart);
 
-      // Y axis labels
-      const yAxisStart = document.createElement('div');
-      yAxisStart.className = 'axis-label y-axis-start';
-      yAxisStart.style.bottom = '10px';
-      yAxisStart.style.left = '50%';
-      yAxisStart.style.transform = 'translateX(-50%)';
-      yAxisStart.textContent = gameState.axes.y.start;
-      chartContainer.appendChild(yAxisStart);
+        const xAxisEnd = document.createElement('div');
+        xAxisEnd.className = 'axis-label x-axis-end';
+        xAxisEnd.style.right = '10px';
+        xAxisEnd.style.bottom = 'calc(50% + 15px)';
+        xAxisEnd.textContent = gameState.axes.x.end;
+        chartContainer.appendChild(xAxisEnd);
 
-      const yAxisEnd = document.createElement('div');
-      yAxisEnd.className = 'axis-label y-axis-end';
-      yAxisEnd.style.top = '10px';
-      yAxisEnd.style.left = '50%';
-      yAxisEnd.style.transform = 'translateX(-50%)';
-      yAxisEnd.textContent = gameState.axes.y.end;
-      chartContainer.appendChild(yAxisEnd);
+        // Y axis labels
+        const yAxisStart = document.createElement('div');
+        yAxisStart.className = 'axis-label y-axis-start';
+        yAxisStart.style.bottom = '10px';
+        yAxisStart.style.left = '50%';
+        yAxisStart.style.transform = 'translateX(-50%)';
+        yAxisStart.textContent = gameState.axes.y.start;
+        chartContainer.appendChild(yAxisStart);
 
-      // Y axis arrow
-      const yAxisArrow = document.createElement('div');
-      yAxisArrow.className = 'axis-arrow y-axis-arrow';
-      yAxisArrow.innerHTML = `
-        <div class="arrow-head arrow-top"></div>
-        <div class="arrow-head arrow-bottom"></div>
-      `;
-      chartContainer.appendChild(yAxisArrow);
+        const yAxisEnd = document.createElement('div');
+        yAxisEnd.className = 'axis-label y-axis-end';
+        yAxisEnd.style.top = '10px';
+        yAxisEnd.style.left = '50%';
+        yAxisEnd.style.transform = 'translateX(-50%)';
+        yAxisEnd.textContent = gameState.axes.y.end;
+        chartContainer.appendChild(yAxisEnd);
 
-      // X axis arrow (just a simple line, optional)
-      const xAxisArrow = document.createElement('div');
-      xAxisArrow.className = 'axis-arrow x-axis-arrow';
-      xAxisArrow.style.position = 'absolute';
-      xAxisArrow.style.top = '50%';
-      xAxisArrow.style.left = '50px';
-      xAxisArrow.style.right = '50px';
-      xAxisArrow.style.height = '2px';
-      xAxisArrow.style.transform = 'translateY(-50%)';
-      xAxisArrow.style.backgroundColor = '#4c2c69';
-      xAxisArrow.style.pointerEvents = 'none';
-      xAxisArrow.innerHTML = `
-        <div class="arrow-head arrow-left"></div>
-        <div class="arrow-head arrow-right"></div>
-      `;
-      chartContainer.appendChild(xAxisArrow);
+        // Y axis arrow
+        const yAxisArrow = document.createElement('div');
+        yAxisArrow.className = 'axis-arrow y-axis-arrow';
+        yAxisArrow.innerHTML = `
+          <div class="arrow-head arrow-top"></div>
+          <div class="arrow-head arrow-bottom"></div>
+        `;
+        chartContainer.appendChild(yAxisArrow);
 
-      container.appendChild(chartContainer);
+        // X axis arrow (just a simple line, optional)
+        const xAxisArrow = document.createElement('div');
+        xAxisArrow.className = 'axis-arrow x-axis-arrow';
+        xAxisArrow.style.position = 'absolute';
+        xAxisArrow.style.top = '50%';
+        xAxisArrow.style.left = '50px';
+        xAxisArrow.style.right = '50px';
+        xAxisArrow.style.height = '2px';
+        xAxisArrow.style.transform = 'translateY(-50%)';
+        xAxisArrow.style.backgroundColor = '#4c2c69';
+        xAxisArrow.style.pointerEvents = 'none';
+        xAxisArrow.innerHTML = `
+          <div class="arrow-head arrow-left"></div>
+          <div class="arrow-head arrow-right"></div>
+        `;
+        chartContainer.appendChild(xAxisArrow);
 
-      // Show pins
-      const isFiltering = (gameState.selectedFilter!=='all');
-      const selectedP = isFiltering ? gameState.selectedFilter : null;
-      gameState.players.forEach((person, pIdx) => {
-        const personColor = playerColors[pIdx % playerColors.length];
-        if (isFiltering && person!==selectedP) {
-          // Dim pins
+        container.appendChild(chartContainer);
+
+        // Show pins
+        const isFiltering = (gameState.selectedFilter!=='all');
+        const selectedP = isFiltering ? gameState.selectedFilter : null;
+        gameState.players.forEach((person, pIdx) => {
+          const personColor = playerColors[pIdx % playerColors.length];
+          if (isFiltering && person!==selectedP) {
+            // Dim pins
+            gameState.players.forEach(placer => {
+              const place = gameState.placements[placer][person];
+              if (!place) return;
+              const pin = document.createElement('div');
+              pin.className = 'pin';
+              pin.textContent = person;
+              pin.style.backgroundColor = personColor;
+              pin.style.opacity = '0.2';
+              pin.style.left = (place.x*100)+'%';
+              pin.style.top = (place.y*100)+'%';
+              pin.addEventListener('click', () => bringPinToFront(pin));
+              chartContainer.appendChild(pin);
+            });
+            return;
+          }
+          // If not filtering or it's the selected player
           gameState.players.forEach(placer => {
             const place = gameState.placements[placer][person];
             if (!place) return;
             const pin = document.createElement('div');
             pin.className = 'pin';
-            pin.textContent = person;
+            if (isFiltering && person===selectedP) {
+              pin.textContent = placer; // show who placed them
+            } else {
+              pin.textContent = person; // show the person
+            }
             pin.style.backgroundColor = personColor;
-            pin.style.opacity = '0.2';
+            if (placer===person) {
+              pin.style.boxShadow = '0 0 0 3px white, 2px 2px 5px rgba(0,0,0,0.3)';
+              pin.style.zIndex = '20';
+            } else {
+              pin.style.transform = 'translate(-50%,-50%) scale(0.8)';
+            }
             pin.style.left = (place.x*100)+'%';
             pin.style.top = (place.y*100)+'%';
             pin.addEventListener('click', () => bringPinToFront(pin));
             chartContainer.appendChild(pin);
           });
-          return;
-        }
-        // If not filtering or it's the selected player
-        gameState.players.forEach(placer => {
-          const place = gameState.placements[placer][person];
-          if (!place) return;
-          const pin = document.createElement('div');
-          pin.className = 'pin';
-          if (isFiltering && person===selectedP) {
-            pin.textContent = placer; // show who placed them
-          } else {
-            pin.textContent = person; // show the person
-          }
-          pin.style.backgroundColor = personColor;
-          if (placer===person) {
-            pin.style.boxShadow = '0 0 0 3px white, 2px 2px 5px rgba(0,0,0,0.3)';
-            pin.style.zIndex = '20';
-          } else {
-            pin.style.transform = 'translate(-50%,-50%) scale(0.8)';
-          }
-          pin.style.left = (place.x*100)+'%';
-          pin.style.top = (place.y*100)+'%';
-          pin.addEventListener('click', () => bringPinToFront(pin));
-          chartContainer.appendChild(pin);
         });
-      });
 
-      // After layout, adjust the y-axis arrow
-      adjustYAxisArrow(chartContainer);
+        // After layout, adjust the y-axis arrow
+        adjustYAxisArrow(chartContainer);
 
-      // If filtering by a specific player, show a scoreboard
-      if (isFiltering) {
-        const sp = selectedP;
-        const selfPlace = gameState.placements[sp][sp];
-        if (selfPlace) {
-          const scoreboardContainer = document.createElement('div');
-          scoreboardContainer.style.marginTop = '20px';
-          scoreboardContainer.style.backgroundColor = '#f9f9f9';
-          scoreboardContainer.style.padding = '12px';
-          scoreboardContainer.style.borderRadius = '8px';
-          scoreboardContainer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+        // If filtering by a specific player, show a scoreboard
+        if (isFiltering) {
+          const sp = selectedP;
+          const selfPlace = gameState.placements[sp][sp];
+          if (selfPlace) {
+            const scoreboardContainer = document.createElement('div');
+            scoreboardContainer.style.marginTop = '20px';
+            scoreboardContainer.style.backgroundColor = '#f9f9f9';
+            scoreboardContainer.style.padding = '12px';
+            scoreboardContainer.style.borderRadius = '8px';
+            scoreboardContainer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
 
-          const scoreboardTitle = document.createElement('h4');
-          scoreboardTitle.textContent = `Who knows ${sp} best?`;
-          scoreboardTitle.style.textAlign = 'center';
-          scoreboardTitle.style.marginBottom = '12px';
-          scoreboardTitle.style.color = '#4c2c69';
-          scoreboardContainer.appendChild(scoreboardTitle);
+            const scoreboardTitle = document.createElement('h4');
+            scoreboardTitle.textContent = `Who knows ${sp} best?`;
+            scoreboardTitle.style.textAlign = 'center';
+            scoreboardTitle.style.marginBottom = '12px';
+            scoreboardTitle.style.color = '#4c2c69';
+            scoreboardContainer.appendChild(scoreboardTitle);
 
-          const playerScores = [];
-          gameState.players.forEach(pl => {
-            if (pl===sp) return;
-            const place = gameState.placements[pl][sp];
-            if (!place) return;
-            const dist = calculateDistance(selfPlace, place);
-            const maxDist = Math.sqrt(2);
-            const sc = Math.max(0, Math.round(100 - (dist/maxDist)*100));
-            playerScores.push({ player: pl, score: sc });
-          });
-          playerScores.sort((a,b)=>b.score - a.score);
+            const playerScores = [];
+            gameState.players.forEach(pl => {
+              if (pl===sp) return;
+              const place = gameState.placements[pl][sp];
+              if (!place) return;
+              const dist = calculateDistance(selfPlace, place);
+              const maxDist = Math.sqrt(2);
+              const sc = Math.max(0, Math.round(100 - (dist/maxDist)*100));
+              playerScores.push({ player: pl, score: sc });
+            });
+            playerScores.sort((a,b)=>b.score - a.score);
 
-          const scoreTable = document.createElement('table');
-          scoreTable.style.width = '100%';
+            const scoreTable = document.createElement('table');
+            scoreTable.style.width = '100%';
 
-          const header = document.createElement('tr');
-          const rankH = document.createElement('th');
-          rankH.textContent = 'Rank';
-          const playerH = document.createElement('th');
-          playerH.textContent = 'Player';
-          const scoreH = document.createElement('th');
-          scoreH.textContent = 'Points';
-          header.appendChild(rankH);
-          header.appendChild(playerH);
-          header.appendChild(scoreH);
-          scoreTable.appendChild(header);
+            const header = document.createElement('tr');
+            const rankH = document.createElement('th');
+            rankH.textContent = 'Rank';
+            const playerH = document.createElement('th');
+            playerH.textContent = 'Player';
+            const scoreH = document.createElement('th');
+            scoreH.textContent = 'Points';
+            header.appendChild(rankH);
+            header.appendChild(playerH);
+            header.appendChild(scoreH);
+            scoreTable.appendChild(header);
 
-          playerScores.forEach((s,i) => {
-            const row = document.createElement('tr');
-            if (i===0) row.classList.add('winner');
-            const rankTd = document.createElement('td');
-            rankTd.textContent = i+1;
-            const playerTd = document.createElement('td');
-            playerTd.textContent = s.player;
-            const scoreTd = document.createElement('td');
-            scoreTd.textContent = s.score + ' points';
-            row.appendChild(rankTd);
-            row.appendChild(playerTd);
-            row.appendChild(scoreTd);
-            scoreTable.appendChild(row);
-          });
+            playerScores.forEach((s,i) => {
+              const row = document.createElement('tr');
+              if (i===0) row.classList.add('winner');
+              const rankTd = document.createElement('td');
+              rankTd.textContent = i+1;
+              const playerTd = document.createElement('td');
+              playerTd.textContent = s.player;
+              const scoreTd = document.createElement('td');
+              scoreTd.textContent = s.score + ' points';
+              row.appendChild(rankTd);
+              row.appendChild(playerTd);
+              row.appendChild(scoreTd);
+              scoreTable.appendChild(row);
+            });
 
-          scoreboardContainer.appendChild(scoreTable);
-          container.appendChild(scoreboardContainer);
+            scoreboardContainer.appendChild(scoreTable);
+            container.appendChild(scoreboardContainer);
+          }
         }
       }
-    }
 
-    // -- Reset game to start over --
-    function resetGame() {
-      gameState.players = [];
-      gameState.currentTurn = 0;
-      gameState.placements = {};
-      gameState.selectedFilter = 'all';
-      nextZIndex = 100;
-      playersList.innerHTML = '';
-      setupSection.style.display = 'block';
-      gameSection.style.display = 'none';
-      finalScoresSection.style.display = 'none';
-      startGameButton.disabled = true;
-      playerNameInput.value = '';
-      playerNameInput.focus();
+      // -- Reset game to start over --
+      function resetGame() {
+        gameState.players = [];
+        gameState.currentTurn = 0;
+        gameState.placements = {};
+        gameState.selectedFilter = 'all';
+        nextZIndex = 100;
+        playersList.innerHTML = '';
+        setupSection.style.display = 'block';
+        gameSection.style.display = 'none';
+        finalScoresSection.style.display = 'none';
+        startGameButton.disabled = true;
+        playerNameInput.value = '';
+        playerNameInput.focus();
+        
+        // Always randomize axes when resetting
+        selectRandomAxes();
+        console.log("Play Again clicked - new axes:", gameState.axes);
+      }
+
+      // -- Distance helper --
+      function calculateDistance(a, b) {
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        return Math.sqrt(dx*dx + dy*dy);
+      }
+      // -- Contrast helper for text color --
+      function getContrastYIQ(hexcolor) {
+        if (hexcolor.charAt(0)==='#') hexcolor = hexcolor.substr(1);
+        const r = parseInt(hexcolor.substr(0,2),16);
+        const g = parseInt(hexcolor.substr(2,2),16);
+        const b = parseInt(hexcolor.substr(4,2),16);
+        return ((r*299)+(g*587)+(b*114))/1000;
+      }
+
+      // -- Event Listeners --
+      addPlayerButton.addEventListener('click', addPlayer);
+      playerNameInput.addEventListener('keydown', e => {
+        if (e.key==='Enter') addPlayer();
+      });
+      clearPlayersButton.addEventListener('click', () => {
+        gameState.players = [];
+        updatePlayersList();
+        startGameButton.disabled = true;
+      });
+      startGameButton.addEventListener('click', startGame);
+      confirmPlacementButton.addEventListener('click', confirmPlacement);
+      playAgainButton.addEventListener('click', resetGame);
+      
+      // Force a second randomization and make sure UI is updated
       selectRandomAxes();
-    }
-
-    // -- Distance helper --
-    function calculateDistance(a, b) {
-      const dx = a.x - b.x;
-      const dy = a.y - b.y;
-      return Math.sqrt(dx*dx + dy*dy);
-    }
-    // -- Contrast helper for text color --
-    function getContrastYIQ(hexcolor) {
-      if (hexcolor.charAt(0)==='#') hexcolor = hexcolor.substr(1);
-      const r = parseInt(hexcolor.substr(0,2),16);
-      const g = parseInt(hexcolor.substr(2,2),16);
-      const b = parseInt(hexcolor.substr(4,2),16);
-      return ((r*299)+(g*587)+(b*114))/1000;
-    }
-
-    // -- Event Listeners --
-    addPlayerButton.addEventListener('click', addPlayer);
-    playerNameInput.addEventListener('keydown', e => {
-      if (e.key==='Enter') addPlayer();
+      console.log("Second randomization after DOM loaded:", gameState.axes);
     });
-    clearPlayersButton.addEventListener('click', () => {
-      gameState.players = [];
-      updatePlayersList();
-      startGameButton.disabled = true;
-    });
-    startGameButton.addEventListener('click', startGame);
-    confirmPlacementButton.addEventListener('click', confirmPlacement);
-    playAgainButton.addEventListener('click', resetGame);
-
-    // -- On load, pick random axes so they appear in setup screen (optional) --
-    selectRandomAxes();
   </script>
 </body>
 </html>
