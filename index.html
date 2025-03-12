@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plot Twist</title>
+    <style>
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #4c2c69;
+            line-height: 1.6;
+            padding: 10px;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 15px;
+            color: #4c2c69;
+        }
+
+        /* Container for the game */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Section styles */
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        /* Game setup section */
+        #setup-section {
+            background-color: #fdc30f;
+            display: block;
+        }
+
+        /* Game play section */
+        #game-section {
+            background-color: white;
+            display: none;
+        }
+
+        /* Final scores section styling */
+        #final-scores-section {
+            background-color: #4c2c69;
+            color: white;
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        #final-scores-section h2 {
+            color: white;
+        }
+        
+        #final-scores-section table {
+            background-color: white;
+            color: #4c2c69;
+        }
+        
+        #final-scores-section th {
+            background-color: #3891a6;
+            color: white;
+        }
+        
+        #final-scores-section tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+        
+        #final-scores-section tr:nth-child(even) {
+            background-color: white;
+        }
+        
+        #final-scores-section .winner {
+            background-color: #fdc30f;
+            color: #4c2c69;
+            font-weight: bold;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* Player list styles */
+        #players-list {
+            margin: 20px 0;
+        }
+
+        .player-item {
+            background-color: #a6d3a0;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-item span {
+            flex-grow: 1;
+        }
+
+        /* Button styles */
+        button {
+            background-color: #3891a6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2f758a;
+        }
+
+        button.secondary {
+            background-color: #db5461;
+        }
+
+        button.secondary:hover {
+            background-color: #c14853;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Graph styles - MOBILE OPTIMIZED */
+        #graph-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            /* Responsive height based on viewport width */
+            aspect-ratio: 1 / 1;
+            margin: 0 auto;
+            border: 2px solid #4c2c69;
+            border-radius: 4px;
+        }
+
+        .axis-label {
+            position: absolute;
+            font-weight: bold;
+            color: #4c2c69;
+            z-index: 5;
+            font-size: 12px; /* Smaller font for mobile */
+            padding: 3px;
+            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+            border-radius: 3px;
+            text-align: center;
+            max-width: 100px; /* Limit width of labels */
+        }
+
+        .x-axis-start {
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .x-axis-end {
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .y-axis-start {
+            left: 50%;
+            bottom: 5px;
+            transform: translateX(-50%);
+        }
+
+        .y-axis-end {
+            left: 50%;
+            top: 5px;
+            transform: translateX(-50%);
+        }
+        
+        .axis-arrow {
+            position: absolute;
+            pointer-events: none;
+        }
+        
+        .x-axis-arrow {
+            top: 50%;
+            left: 50px;
+            right: 50px;
+            height: 2px;
+            transform: translateY(-50%);
+            background-color: #4c2c69;
+            z-index: 1;
+        }
+        
+        .y-axis-arrow {
+            left: 50%;
+            top: 35px;
+            bottom: 35px;
+            width: 2px;
+            transform: translateX(-50%);
+            background-color: #4c2c69;
+        }
+        
+        .arrow-head {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+        }
+        
+        .arrow-left {
+            left: -6px;
+            top: -4px;
+            border-width: 5px 8px 5px 0;
+            border-color: transparent #4c2c69 transparent transparent;
+        }
+        
+        .arrow-right {
+            right: -6px;
+            top: -4px;
+            border-width: 5px 0 5px 8px;
+            border-color: transparent transparent transparent #4c2c69;
+        }
+        
+        .arrow-top {
+            top: -6px;
+            left: -4px;
+            border-width: 0 5px 8px 5px;
+            border-color: transparent transparent #4c2c69 transparent;
+        }
+        
+        .arrow-bottom {
+            bottom: -6px;
+            left: -4px;
+            border-width: 8px 5px 0 5px;
+            border-color: #4c2c69 transparent transparent transparent;
+        }
+
+        /* Pins container for unplaced pins - MOBILE OPTIMIZED */
+        .pins-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 15px 0;
+            padding: 8px;
+            min-height: auto;
+            height: auto;
+        }
+        
+        /* Pin styles - Mobile optimized */
+        .pin {
+            position: absolute;
+            width: auto;
+            min-width: 70px; /* Slightly smaller for mobile */
+            height: auto;
+            padding: 6px 8px;
+            background-color: #fdc30f;
+            color: #4c2c69;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            transition: opacity 0.3s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            overflow: hidden;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 12px; /* Smaller text for mobile */
+            border-radius: 2px;
+        }
+        
+        /* Unplaced pins in the container - MOBILE OPTIMIZED */
+        .pins-container .pin {
+            position: relative;
+            transform: none;
+            margin: 3px;
+            display: inline-block;
+            height: 34px; /* Slightly smaller for mobile */
+            align-self: flex-start;
+            flex-grow: 0;
+        }
+
+        /* Style for unplaced pins */
+        .pin[data-placed="false"] {
+            box-shadow: 0 0 0 2px #db5461, 2px 2px 5px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 2px #db5461; }
+            50% { box-shadow: 0 0 0 4px #db5461; }
+            100% { box-shadow: 0 0 0 2px #db5461; }
+        }
+
+        .pin:active, .pin.dragging {
+            cursor: grabbing;
+            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+        
+        /* Player filter buttons styles - MOBILE OPTIMIZED */
+        .player-filter-container {
+            background-color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .player-filter-heading {
+            text-align: center;
+            margin-bottom: 12px;
+            color: #4c2c69;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .player-filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .player-filter-button {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            min-width: 70px;
+            text-align: center;
+            font-size: 12px; /* Smaller for mobile */
+        }
+        
+        .player-filter-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+        }
+        
+        .player-filter-button.active {
+            border: 2px solid #4c2c69;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .player-filter-button.all-button {
+            background-color: #4c2c69;
+            color: white;
+        }
+        
+        .player-filter-button.all-button.active {
+            border: 2px solid #fdc30f;
+        }
+
+        /* Turn indicator - MOBILE OPTIMIZED */
+        #turn-indicator {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #4c2c69;
+        }
+
+        /* Instructions - MOBILE OPTIMIZED */
+        .instructions {
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: #fdc30f;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Results visualization */
+        .result-display {
+            margin-bottom: 25px;
+        }
+
+        .pin-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 3px;
+            font-size: 12px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* Tables for scores - MOBILE OPTIMIZED */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3891a6;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Winner highlight */
+        .winner {
+            background-color: #fdc30f;
+            font-weight: bold;
+        }
+
+        /* Pins status indicator - MOBILE OPTIMIZED */
+        .pins-status {
+            margin: 12px 0;
+            padding: 8px;
+            background-color: #f2f2f2;
+            border-radius: 4px;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .pins-status.all-placed {
+            background-color: #a6d3a0;
+            color: #2a6b34;
+        }
+
+        /* Responsive styles - ENHANCED */
+        @media (min-width: 768px) {
+            /* Larger screens */
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                max-width: 1000px;
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+            
+            .axis-label {
+                font-size: 14px;
+                max-width: none;
+            }
+            
+            .pin {
+                font-size: 14px;
+                min-width: 80px;
+                padding: 8px 12px;
+            }
+            
+            .pins-container .pin {
+                height: 40px;
+                margin: 5px;
+            }
+            
+            #turn-indicator {
+                font-size: 24px;
+            }
+            
+            .instructions {
+                font-size: 16px;
+            }
+            
+            table {
+                font-size: 16px;
+            }
+            
+            .player-filter-button {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+        }
+        
+        /* Small screen optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding: 8px;
+            }
+            
+            .section {
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+            
+            button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .axis-label {
+                font-size: 10px;
+                max-width: 80px;
+            }
+            
+            .x-axis-start {
+                left: 5px;
+            }
+            
+            .x-axis-end {
+                right: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Plot Twist</h1>
+        
+        <!-- Setup Section -->
+        <div id="setup-section" class="section">
+            <h2>Player Setup</h2>
+            <div class="instructions">
+                <p>Enter the names of all players who will participate.</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="player-name">Player Name:</label>
+                <input type="text" id="player-name" placeholder="Enter player name">
+            </div>
+            
+            <button id="add-player">Add Player</button>
+            
+            <div id="players-list"></div>
+            
+            <div class="button-group">
+                <button id="start-game" disabled>Start Game</button>
+                <button id="clear-players" class="secondary">Clear All</button>
+            </div>
+        </div>
+        
+        <!-- Game Play Section -->
+        <div id="game-section" class="section">
+            <div id="turn-indicator"></div>
+            
+            <div class="instructions">
+                <p>Drag each sticky note from below and place it where you think that person belongs on the graph.</p>
+            </div>
+            
+            <!-- Pins container for unplaced pins -->
+            <div id="pins-container" class="pins-container">
+                <!-- Pins will be added here dynamically -->
+            </div>
+            
+            <div id="pins-status" class="pins-status">
+                Waiting for all pins to be placed on the chart...
+            </div>
+            
+            <div id="graph-container">
+                <!-- Grid lines will be added dynamically -->
+                
+                <!-- Axis labels -->
+                <div class="axis-label x-axis-start">Touches Grass</div>
+                <div class="axis-label x-axis-end">Couch Potato</div>
+                <div class="axis-label y-axis-start">Lights Candles</div>
+                <div class="axis-label y-axis-end">Lights Fires</div>
+                
+                <!-- Axis arrows -->
+                <div class="axis-arrow x-axis-arrow">
+                    <div class="arrow-head arrow-left"></div>
+                    <div class="arrow-head arrow-right"></div>
+                </div>
+                <div class="axis-arrow y-axis-arrow">
+                    <div class="arrow-head arrow-top"></div>
+                    <div class="arrow-head arrow-bottom"></div>
+                </div>
+                
+                <!-- Pins will be added dynamically -->
+            </div>
+            
+            <div class="button-group" style="justify-content: center;">
+                <button id="confirm-placement" disabled>Confirm Placement</button>
+            </div>
+        </div>
+        
+        <!-- Final Scores Section -->
+        <div id="final-scores-section">
+            <h2>Final Scores</h2>
+            <div id="final-scores-table"></div>
+            
+            <h3 style="margin-top: 30px; color: white;">Everyone's Placements</h3>
+            
+            <!-- Player filter buttons -->
+            <div class="player-filter-container">
+                <div class="player-filter-heading">View where people placed:</div>
+                <div class="player-filter-buttons" id="player-filter-buttons">
+                    <!-- Buttons will be added dynamically -->
+                </div>
+            </div>
+
+            <div id="collective-placements-container" style="background-color: white; border-radius: 8px; padding: 15px; margin-bottom: 20px;"></div>
+            
+            <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+                <p style="color: white; font-size: 16px; margin-bottom: 10px;">Thanks for playing Plot Twist, please give us some feedback</p>
+                <p style="margin-top: 10px;"><a href="https://forms.gle/P7ZFndmYZTRCye8i9" target="_blank" style="color: white; text-decoration: underline;">https://forms.gle/YL3cLa2v239HMNGe6</a></p>
+            </div>
+            
+            <div class="button-group" style="justify-content: center;">
+                <button id="play-again">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global z-index tracker to maintain pin stacking order
+        let nextZIndex = 100;
+        
+        // Game state
+        const gameState = {
+            players: [],
+            currentTurn: 0,
+            placements: {}, // This will store all player placements
+            selectedFilter: 'all', // 'all' or player name
+            axes: {
+                x: { start: "", end: "" },
+                y: { start: "", end: "" }
+            }
+        };
+        
+        // Possible axis options
+        const axisOptions = [
+            { start: "High Five", end: "Fist Bump" },
+            { start: "Couch Potato", end: "Touches Grass" },
+            { start: "Lights Candles", end: "Lights Bonfires" },
+            { start: "Silent Sneezer", end: "Powerful Sneezer" },
+            { start: "Napkin User", end: "Sleeve Wiper" },
+            { start: "Shower Singer", end: "Shower Thinker" },
+            { start: "Spider Saver", end: "Spider Squisher" },
+            { start: "Movie Talker", end: "Shusher" },
+            { start: "Sock Shoe Sock Shoe", end: "Sock Sock Shoe Shoe" },
+            { start: "Bookworm", end: "Illiterate" },
+            { start: "Sells feet pics", end: "Buys feet pics" },
+            { start: "Predator", end: "Prey" },
+            { start: "Sugar Baby", end: "Sugar Daddy/Momma" },
+            { start: "Mountains", end: "Beach" },
+            { start: "Early Bird", end: "The Worm" },
+            { start: "Left on read", end: "Leaving Others On Read" },
+            { start: "Toilet Paper Folder", end: "Toilet Paper Crumbler" },
+            { start: "Window Seat", end: "Aisle Seat" },
+            { start: "One Tab Open", end: "100 Tabs Open" },
+            { start: "Instruction Reader", end: "Wings It" },
+            { start: "Menu Studier", end: "Panic Orderer" },
+            { start: "Punctual", end: "Fashionably Late" },
+            { start: "Single Alarm", end: "Snooze Abuser" },
+            { start: "Influencer", end: "Digital Detox" },
+            { start: "Cereal First", end: "Milk First" },
+            { start: "Boundary Setter", end: "Pushover" },
+            { start: "Conflict Avoidant", end: "Conflict Causer" },
+            { start: "Review Reader", end: "Impulse Buyer" },
+            { start: "Full Tank", end: "Rides on Empty" },
+            { start: "Matching Sock Seeker", end: "Any Two Will Do" },
+            { start: "Hard G in GIF", end: "Soft G in GIF" },
+            { start: "Tea Spiller", end: "Tea Drinker" },
+            { start: "Slow Eater", end: "Speed Inhaler" },
+            { start: "Fork and Knife Pizza", end: "Folded Slice" },
+            { start: "Umbrella Owner", end: "Soaked And Unprepared" },
+            { start: "Subtitles On", end: "Subtitles Off" },
+            { start: "Socks in Bed", end: "Barefoot Sleeper" },
+            { start: "Minimalist", end: "Maximalist" },
+            { start: "QWERTY Expert", end: "Touch Typer" },
+            { start: "Socks in Bed", end: "Barefoot Sleeper" },
+            { start: "Four Suitcases", end: "Just A Backpack" },
+            { start: "Front Row Sitter", end: "Back Row Hider" },
+            { start: "Tailgater", end: "Defensive Driver" },
+            { start: "Installs Updates", end: "'Remind Me Later'" },
+            { start: "Asks for Directions", end: "Drives in Circles" },
+            { start: "Natural Navigator", end: "Makes L with Fingers" },
+            { start: "Watch With Numbers", end: "Watch With Hands" },
+            { start: "Power Walker", end: "Stroller" }
+        ];
+
+        // DOM Elements
+        const setupSection = document.getElementById('setup-section');
+        const gameSection = document.getElementById('game-section');
+        const finalScoresSection = document.getElementById('final-scores-section');
+        const playerNameInput = document.getElementById('player-name');
+        const addPlayerButton = document.getElementById('add-player');
+        const playersList = document.getElementById('players-list');
+        const startGameButton = document.getElementById('start-game');
+        const clearPlayersButton = document.getElementById('clear-players');
+        const turnIndicator = document.getElementById('turn-indicator');
+        const graphContainer = document.getElementById('graph-container');
+        const confirmPlacementButton = document.getElementById('confirm-placement');
+        const finalScoresTable = document.getElementById('final-scores-table');
+        const playAgainButton = document.getElementById('play-again');
+        const playerFilterButtons = document.getElementById('player-filter-buttons');
+        const pinsStatus = document.getElementById('pins-status');
+
+        // Colors for pins in results view - updated with new color scheme
+        const playerColors = [
+            '#db5461', // New accent red
+            '#3891a6', // New accent blue
+            '#fdc30f', // New accent yellow
+            '#a6d3a0', // New accent green
+            '#4c2c69', // New primary dark
+            '#e898a0', // Lighter red
+            '#65b1c2', // Lighter blue
+            '#feec7f', // Lighter yellow
+            '#c0e2bc'  // Lighter green
+        ];
+
+        // Function to select random axes
+        function selectRandomAxes() {
+            // Shuffle axis options
+            const shuffled = [...axisOptions].sort(() => 0.5 - Math.random());
+            
+            // Select first two for x and y axes
+            const xAxis = shuffled[0];
+            const yAxis = shuffled[1];
+            
+            // Randomly decide whether to swap start/end for each axis
+            const xSwap = Math.random() > 0.5;
+            const ySwap = Math.random() > 0.5;
+            
+            gameState.axes = {
+                x: {
+                    start: xSwap ? xAxis.end : xAxis.start,
+                    end: xSwap ? xAxis.start : xAxis.end
+                },
+                y: {
+                    start: ySwap ? yAxis.end : yAxis.start,
+                    end: ySwap ? yAxis.start : yAxis.end
+                }
+            };
+            
+            // Update any visible axis labels
+            updateAxisLabels();
+        }
+        
+        // Function to update axis labels
+        function updateAxisLabels() {
+            const xStartLabels = document.querySelectorAll('.x-axis-start');
+            const xEndLabels = document.querySelectorAll('.x-axis-end');
+            const yStartLabels = document.querySelectorAll('.y-axis-start');
+            const yEndLabels = document.querySelectorAll('.y-axis-end');
+            
+            xStartLabels.forEach(label => label.textContent = gameState.axes.x.start);
+            xEndLabels.forEach(label => label.textContent = gameState.axes.x.end);
+            yStartLabels.forEach(label => label.textContent = gameState.axes.y.start);
+            yEndLabels.forEach(label => label.textContent = gameState.axes.y.end);
+        }
+
+        // Initialize with random axes on page load
+        selectRandomAxes();
+
+        // Function to add a player
+        function addPlayer() {
+            const playerName = playerNameInput.value.trim();
+            
+            if (playerName === '') {
+                alert('Please enter a player name');
+                return;
+            }
+            
+            if (gameState.players.includes(playerName)) {
+                alert('This player is already added');
+                return;
+            }
+            
+            gameState.players.push(playerName);
+            updatePlayersList();
+            playerNameInput.value = '';
+            playerNameInput.focus();
+            
+            // Enable start game button if at least 2 players
+            startGameButton.disabled = gameState.players.length < 2;
+        }
+
+        // Function to update the list of players
+        function updatePlayersList() {
+            playersList.innerHTML = '';
+            
+            gameState.players.forEach((player, index) => {
+                const playerItem = document.createElement('div');
+                playerItem.className = 'player-item';
+                
+                const playerNumber = document.createElement('div');
+                playerNumber.textContent = `${index + 1}.`;
+                playerNumber.style.marginRight = '10px';
+                
+                const playerName = document.createElement('span');
+                playerName.textContent = player;
+                
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.className = 'secondary';
+                removeButton.style.padding = '5px 10px';
+                removeButton.onclick = () => {
+                    gameState.players.splice(index, 1);
+                    updatePlayersList();
+                    // Disable start game button if less than 2 players
+                    startGameButton.disabled = gameState.players.length < 2;
+                };
+                
+                playerItem.appendChild(playerNumber);
+                playerItem.appendChild(playerName);
+                playerItem.appendChild(removeButton);
+                
+                playersList.appendChild(playerItem);
+            });
+        }
+
+        // Function to start the game
+        function startGame() {
+            setupSection.style.display = 'none';
+            gameSection.style.display = 'block';
+            
+            // Initialize placements object
+            gameState.placements = {};
+            gameState.players.forEach(player => {
+                gameState.placements[player] = {};
+            });
+            
+            // Select random axes
+            selectRandomAxes();
+            
+            // Set current turn to first player
+            gameState.currentTurn = 0;
+            startPlayerTurn();
+        }
+
+        // Function to start a player's turn
+        function startPlayerTurn() {
+            const currentPlayer = gameState.players[gameState.currentTurn];
+            turnIndicator.textContent = `${currentPlayer}'s Turn`;
+            
+            // Clear previous pins
+            const pins = document.querySelectorAll('.pin');
+            pins.forEach(pin => pin.remove());
+            
+            // Reset z-index counter for new turn
+            nextZIndex = 100;
+            
+            // Create pins for all players
+            gameState.players.forEach((player, index) => {
+                createPin(player, index);
+            });
+            
+            // Initially disable confirm button and update pins status
+            updateConfirmButtonState();
+        }
+
+        // Function to create a draggable pin
+        function createPin(player, index) {
+            const pinsContainer = document.getElementById('pins-container');
+            const pin = document.createElement('div');
+            pin.className = 'pin';
+            
+            // Set the full name directly in the pin
+            pin.textContent = player;
+            pin.id = `pin-${player}`;
+            pin.setAttribute('data-player', player);
+            pin.setAttribute('data-fullname', player);
+            pin.setAttribute('data-placed', 'false'); // Track if pin has been placed on chart
+            
+            // Assign player's color to the pin
+            const color = playerColors[index % playerColors.length];
+            pin.style.backgroundColor = color;
+            
+            // Set text color based on background brightness
+            if (getContrastYIQ(color) < 128) {
+                pin.style.color = 'white';
+            } else {
+                pin.style.color = '#4c2c69';
+            }
+            
+            // Make pin draggable
+            pin.onmousedown = dragStart;
+            pin.ontouchstart = touchStart;
+            
+            // Simple click handler to bring pin to front
+            pin.addEventListener('click', function(e) {
+                bringPinToFront(this);
+            });
+            
+            // Add to pins container first
+            pinsContainer.appendChild(pin);
+        }
+        
+        // Function to bring a pin to front (higher z-index)
+        function bringPinToFront(pin) {
+            // Increment the global z-index counter and set it to this pin
+            // This ensures the most recently clicked pin always has the highest z-index
+            nextZIndex += 1;
+            pin.style.zIndex = nextZIndex;
+        }
+
+        // Function to check if all pins are placed and update UI
+        function updateConfirmButtonState() {
+            const pins = document.querySelectorAll('.pin');
+            let allPlaced = true;
+            let placedCount = 0;
+            let totalPins = pins.length;
+            
+            pins.forEach(pin => {
+                if (pin.getAttribute('data-placed') === 'false') {
+                    allPlaced = false;
+                } else {
+                    placedCount++;
+                }
+            });
+            
+            // Update confirm button state
+            confirmPlacementButton.disabled = !allPlaced;
+            
+            // Update pins status message
+            if (allPlaced) {
+                pinsStatus.textContent = 'All pins placed! You can now confirm your placement.';
+                pinsStatus.className = 'pins-status all-placed';
+            } else {
+                pinsStatus.textContent = `Placed ${placedCount} of ${totalPins} pins. Please place all pins on the chart.`;
+                pinsStatus.className = 'pins-status';
+            }
+        }
+
+        // Dragging functionality
+        let activeDragPin = null;
+        let startX, startY;
+
+        function dragStart(e) {
+            e.preventDefault();
+            activeDragPin = e.target;
+            activeDragPin.classList.add('dragging');
+            
+            // Bring pin to front immediately
+            bringPinToFront(activeDragPin);
+            
+            // Get initial positions
+            startX = e.clientX;
+            startY = e.clientY;
+            
+            // Store original position
+            const rect = activeDragPin.getBoundingClientRect();
+            activeDragPin.originalLeft = rect.left;
+            activeDragPin.originalTop = rect.top;
+            
+            // If pin hasn't been placed on chart yet, move it to the graph container for dragging
+            if (activeDragPin.getAttribute('data-placed') === 'false') {
+                // Clone the pin's style before appending to graph container
+                const pinStyle = window.getComputedStyle(activeDragPin);
+                const width = pinStyle.width;
+                const height = pinStyle.height;
+                
+                // Remove from pins container and add to graph container
+                activeDragPin.parentNode.removeChild(activeDragPin);
+                graphContainer.appendChild(activeDragPin);
+                
+                // Set position relative to graph container
+                const graphRect = graphContainer.getBoundingClientRect();
+                const pinX = e.clientX - graphRect.left;
+                const pinY = e.clientY - graphRect.top;
+                
+                // Position the pin where the mouse is
+                activeDragPin.style.position = 'absolute';
+                activeDragPin.style.left = `${pinX}px`;
+                activeDragPin.style.top = `${pinY}px`;
+                activeDragPin.style.transform = 'translate(-50%, -50%)';
+                activeDragPin.style.width = width;
+                activeDragPin.style.height = height;
+            }
+            
+            // Add event listeners for dragging
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('mouseup', dragEnd);
+        }
+
+        function dragMove(e) {
+            if (!activeDragPin) return;
+            
+            const rect = graphContainer.getBoundingClientRect();
+            
+            // Calculate new position relative to graph container
+            let newX = (e.clientX - rect.left);
+            let newY = (e.clientY - rect.top);
+            
+            // Check if the pin is already placed on the chart
+            const isPlaced = activeDragPin.getAttribute('data-placed') === 'true';
+            
+            // If pin is already placed, constrain to graph boundaries
+            if (isPlaced) {
+                newX = Math.max(0, Math.min(newX, rect.width));
+                newY = Math.max(0, Math.min(newY, rect.height));
+            } else {
+                // If pin is not placed yet but enters the chart, mark it as placed
+                if (newY >= 0 && newY <= rect.height && newX >= 0 && newX <= rect.width) {
+                    activeDragPin.setAttribute('data-placed', 'true');
+                    // Update confirm button state
+                    updateConfirmButtonState();
+                }
+            }
+            
+            // Update pin position
+            activeDragPin.style.left = `${newX}px`;
+            activeDragPin.style.top = `${newY}px`;
+        }
+
+        function dragEnd() {
+            if (!activeDragPin) return;
+            
+            activeDragPin.classList.remove('dragging');
+            
+            // Get graph container dimensions
+            const rect = graphContainer.getBoundingClientRect();
+            
+            // Get the pin's position
+            const pinLeft = parseFloat(activeDragPin.style.left);
+            const pinTop = parseFloat(activeDragPin.style.top);
+            
+            // Check if the pin is outside the chart boundaries
+            const isOutsideChart = pinLeft < 0 || pinLeft > rect.width || pinTop < 0 || pinTop > rect.height;
+            
+            // If the pin is outside the chart and not yet placed, return it to the pins container
+            if (isOutsideChart && activeDragPin.getAttribute('data-placed') === 'false') {
+                // Remove from graph container
+                graphContainer.removeChild(activeDragPin);
+                
+                // Reset pin styling for pins container
+                activeDragPin.style.position = '';
+                activeDragPin.style.left = '';
+                activeDragPin.style.top = '';
+                activeDragPin.style.transform = '';
+                
+                // Add back to pins container
+                const pinsContainer = document.getElementById('pins-container');
+                pinsContainer.appendChild(activeDragPin);
+            }
+            
+            activeDragPin = null;
+            document.removeEventListener('mousemove', dragMove);
+            document.removeEventListener('mouseup', dragEnd);
+        }
+
+        // Touch handling for mobile devices
+        function touchStart(e) {
+            if (e.touches.length === 1) {
+                e.preventDefault();
+                activeDragPin = e.target;
+                activeDragPin.classList.add('dragging');
+                
+                // Bring the pin to front when touch dragging starts
+                bringPinToFront(activeDragPin);
+                
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                
+                // Store original position
+                const rect = activeDragPin.getBoundingClientRect();
+                activeDragPin.originalLeft = rect.left;
+                activeDragPin.originalTop = rect.top;
+                
+                // If pin hasn't been placed on chart yet, move it to the graph container for dragging
+                if (activeDragPin.getAttribute('data-placed') === 'false') {
+                    // Clone the pin's style before appending to graph container
+                    const pinStyle = window.getComputedStyle(activeDragPin);
+                    const width = pinStyle.width;
+                    const height = pinStyle.height;
+                    
+                    // Remove from pins container and add to graph container
+                    activeDragPin.parentNode.removeChild(activeDragPin);
+                    graphContainer.appendChild(activeDragPin);
+                    
+                    // Set position relative to graph container
+                    const graphRect = graphContainer.getBoundingClientRect();
+                    const pinX = e.touches[0].clientX - graphRect.left;
+                    const pinY = e.touches[0].clientY - graphRect.top;
+                    
+                    // Position the pin where the touch is
+                    activeDragPin.style.position = 'absolute';
+                    activeDragPin.style.left = `${pinX}px`;
+                    activeDragPin.style.top = `${pinY}px`;
+                    activeDragPin.style.transform = 'translate(-50%, -50%)';
+                    activeDragPin.style.width = width;
+                    activeDragPin.style.height = height;
+                }
+                
+                document.addEventListener('touchmove', touchMove, { passive: false });
+                document.addEventListener('touchend', touchEnd);
+            }
+        }
+
+        function touchMove(e) {
+            e.preventDefault();
+            if (!activeDragPin || e.touches.length !== 1) return;
+            
+            const rect = graphContainer.getBoundingClientRect();
+            
+            // Calculate new position relative to graph container
+            let newX = (e.touches[0].clientX - rect.left);
+            let newY = (e.touches[0].clientY - rect.top);
+            
+            // Check if the pin is already placed on the chart
+            const isPlaced = activeDragPin.getAttribute('data-placed') === 'true';
+            
+            // If pin is already placed, constrain to graph boundaries
+            if (isPlaced) {
+                newX = Math.max(0, Math.min(newX, rect.width));
+                newY = Math.max(0, Math.min(newY, rect.height));
+            } else {
+                // If pin is not placed yet but enters the chart, mark it as placed
+                if (newY >= 0 && newY <= rect.height && newX >= 0 && newX <= rect.width) {
+                    activeDragPin.setAttribute('data-placed', 'true');
+                    // Update confirm button state
+                    updateConfirmButtonState();
+                }
+            }
+            
+            // Update pin position
+            activeDragPin.style.left = `${newX}px`;
+            activeDragPin.style.top = `${newY}px`;
+        }
+
+        function touchEnd() {
+            if (!activeDragPin) return;
+            
+            activeDragPin.classList.remove('dragging');
+            
+            // Get graph container dimensions
+            const rect = graphContainer.getBoundingClientRect();
+            
+            // Get the pin's position
+            const pinLeft = parseFloat(activeDragPin.style.left);
+            const pinTop = parseFloat(activeDragPin.style.top);
+            
+            // Check if the pin is outside the chart boundaries
+            const isOutsideChart = pinLeft < 0 || pinLeft > rect.width || pinTop < 0 || pinTop > rect.height;
+            
+            // If the pin is outside the chart and not yet placed, return it to the pins container
+            if (isOutsideChart && activeDragPin.getAttribute('data-placed') === 'false') {
+                // Remove from graph container
+                graphContainer.removeChild(activeDragPin);
+                
+                // Reset pin styling for pins container
+                activeDragPin.style.position = '';
+                activeDragPin.style.left = '';
+                activeDragPin.style.top = '';
+                activeDragPin.style.transform = '';
+                
+                // Add back to pins container
+                const pinsContainer = document.getElementById('pins-container');
+                pinsContainer.appendChild(activeDragPin);
+            }
+            
+            activeDragPin = null;
+            document.removeEventListener('touchmove', touchMove);
+            document.removeEventListener('touchend', touchEnd);
+        }
+
+        // Function to confirm placement and move to next turn
+        function confirmPlacement() {
+            const currentPlayer = gameState.players[gameState.currentTurn];
+            const placements = {};
+            
+            // Get positions of all pins
+            const pins = document.querySelectorAll('.pin');
+            pins.forEach(pin => {
+                const player = pin.getAttribute('data-player');
+                const rect = graphContainer.getBoundingClientRect();
+                
+                // Calculate normalized position (0-1)
+                const x = parseFloat(pin.style.left) / rect.width;
+                const y = parseFloat(pin.style.top) / rect.height;
+                
+                placements[player] = { x, y };
+            });
+            
+            // Save placements
+            gameState.placements[currentPlayer] = placements;
+            
+            // Move to next turn or show results
+            gameState.currentTurn++;
+            if (gameState.currentTurn < gameState.players.length) {
+                startPlayerTurn();
+            } else {
+                showFinalScores();
+            }
+        }
+        
+        // Function to calculate final scores
+        function calculateFinalScores() {
+            const scores = {};
+            
+            // Initialize scores
+            gameState.players.forEach(player => {
+                scores[player] = 0;
+            });
+            
+            // Calculate scores for each player
+            gameState.players.forEach(person => {
+                const selfPlacement = gameState.placements[person][person];
+                
+                gameState.players.forEach(player => {
+                    if (player === person) return; // Skip self
+                    
+                    const placement = gameState.placements[player][person];
+                    
+                    // Calculate distance
+                    const distance = calculateDistance(selfPlacement, placement);
+                    
+                    // Calculate score (100 - distance * 100)
+                    const maxDistance = Math.sqrt(2); // Maximum possible distance in a 1x1 square
+                    const score = Math.max(0, Math.round(100 - (distance / maxDistance) * 100));
+                    
+                    // Add score
+                    scores[player] += score;
+                });
+            });
+            
+            return scores;
+        }
+
+        // Function to show final scores
+        function showFinalScores() {
+            gameSection.style.display = 'none';
+            finalScoresSection.style.display = 'block';
+            
+            // Reset any lingering state
+            gameState.selectedFilter = 'all';
+            
+            // Calculate scores
+            const scores = calculateFinalScores();
+            
+            // Convert to array and sort
+            const sortedScores = Object.entries(scores)
+                .map(([player, score]) => ({ player, score }))
+                .sort((a, b) => b.score - a.score);
+            
+            // Create table
+            const table = document.createElement('table');
+            
+            // Create header
+            const header = document.createElement('tr');
+            const rankHeader = document.createElement('th');
+            rankHeader.textContent = 'Rank';
+            const playerHeader = document.createElement('th');
+            playerHeader.textContent = 'Player';
+            const scoreHeader = document.createElement('th');
+            scoreHeader.textContent = 'Score';
+            
+            header.appendChild(rankHeader);
+            header.appendChild(playerHeader);
+            header.appendChild(scoreHeader);
+            table.appendChild(header);
+            
+            // Add rows for each player
+            sortedScores.forEach((score, index) => {
+                const row = document.createElement('tr');
+                
+                // Add winner class to first place
+                if (index === 0) {
+                    row.className = 'winner';
+                }
+                
+                const rankCell = document.createElement('td');
+                rankCell.textContent = index + 1;
+                
+                const playerCell = document.createElement('td');
+                playerCell.textContent = score.player;
+                
+                const scoreCell = document.createElement('td');
+                scoreCell.textContent = score.score + ' points';
+                
+                row.appendChild(rankCell);
+                row.appendChild(playerCell);
+                row.appendChild(scoreCell);
+                table.appendChild(row);
+            });
+            
+            finalScoresTable.innerHTML = '';
+            finalScoresTable.appendChild(table);
+            
+            // Add winner announcement
+            const winner = sortedScores[0];
+            const winnerAnnouncement = document.createElement('div');
+            winnerAnnouncement.style.textAlign = 'center';
+            winnerAnnouncement.style.fontSize = '20px';
+            winnerAnnouncement.style.margin = '15px 0';
+            winnerAnnouncement.innerHTML = `<strong>${winner.player}</strong> knows their friends best with ${winner.score} points!`;
+            
+            finalScoresTable.appendChild(winnerAnnouncement);
+            
+            // Create player filter buttons
+            createPlayerFilterButtons();
+            
+            // Create initial chart
+            createCollectivePlacementsChart();
+        }
+        
+        // Function to create player filter buttons
+        function createPlayerFilterButtons() {
+            playerFilterButtons.innerHTML = '';
+            
+            // Create "All" button
+            const allButton = document.createElement('div');
+            allButton.className = 'player-filter-button all-button' + (gameState.selectedFilter === 'all' ? ' active' : '');
+            allButton.textContent = 'All';
+            allButton.onclick = () => {
+                gameState.selectedFilter = 'all';
+                updatePlayerFilterButtons();
+                createCollectivePlacementsChart();
+            };
+            playerFilterButtons.appendChild(allButton);
+            
+            // Create a button for each player
+            gameState.players.forEach((player, index) => {
+                const button = document.createElement('div');
+                button.className = 'player-filter-button' + (gameState.selectedFilter === player ? ' active' : '');
+                button.textContent = player;
+                
+                // Use player's color
+                const color = playerColors[index % playerColors.length];
+                button.style.backgroundColor = color;
+                
+                // Set text color based on background brightness
+                if (getContrastYIQ(color) < 128) {
+                    button.style.color = 'white';
+                } else {
+                    button.style.color = '#4c2c69';
+                }
+                
+                button.onclick = () => {
+                    gameState.selectedFilter = player;
+                    updatePlayerFilterButtons();
+                    createCollectivePlacementsChart();
+                };
+                
+                playerFilterButtons.appendChild(button);
+            });
+        }
+        
+        // Function to update active state of filter buttons
+        function updatePlayerFilterButtons() {
+            const buttons = playerFilterButtons.querySelectorAll('.player-filter-button');
+            
+            buttons.forEach(button => {
+                if (
+                    (button.classList.contains('all-button') && gameState.selectedFilter === 'all') ||
+                    (!button.classList.contains('all-button') && button.textContent === gameState.selectedFilter)
+                ) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        // Function to calculate distance between two points
+        function calculateDistance(point1, point2) {
+            const dx = point1.x - point2.x;
+            const dy = point1.y - point2.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        // Function to create collective placements chart with filtering
+        function createCollectivePlacementsChart() {
+            const container = document.getElementById('collective-placements-container');
+            container.innerHTML = '';
+            
+            // Reset z-index counter for new chart
+            nextZIndex = 100;
+            
+            // Add a title for the visualization
+            const chartTitle = document.createElement('h3');
+            chartTitle.textContent = 'Player Placement Map';
+            chartTitle.style.textAlign = 'center';
+            chartTitle.style.marginBottom = '15px';
+            chartTitle.style.color = '#4c2c69';
+            container.appendChild(chartTitle);
+            
+            // Create chart container
+            const chartContainer = document.createElement('div');
+            chartContainer.style.position = 'relative';
+            chartContainer.style.width = '100%';
+            chartContainer.style.aspectRatio = '1 / 1';
+            chartContainer.style.margin = '0 auto';
+            chartContainer.style.border = '2px solid #4c2c69';
+            chartContainer.style.borderRadius = '4px';
+            chartContainer.style.backgroundColor = 'white';
+            
+            // Make sure container is empty
+            chartContainer.innerHTML = '';
+            
+            // Add axis labels
+            const xAxisStart = document.createElement('div');
+            xAxisStart.className = 'axis-label x-axis-start';
+            xAxisStart.textContent = gameState.axes.x.start;
+            chartContainer.appendChild(xAxisStart);
+            
+            const xAxisEnd = document.createElement('div');
+            xAxisEnd.className = 'axis-label x-axis-end';
+            xAxisEnd.textContent = gameState.axes.x.end;
+            chartContainer.appendChild(xAxisEnd);
+            
+            const yAxisStart = document.createElement('div');
+            yAxisStart.className = 'axis-label y-axis-start';
+            yAxisStart.textContent = gameState.axes.y.start;
+            chartContainer.appendChild(yAxisStart);
+            
+            const yAxisEnd = document.createElement('div');
+            yAxisEnd.className = 'axis-label y-axis-end';
+            yAxisEnd.textContent = gameState.axes.y.end;
+            chartContainer.appendChild(yAxisEnd);
+            
+            // Add axis arrows
+            const xAxisArrow = document.createElement('div');
+            xAxisArrow.className = 'axis-arrow x-axis-arrow';
+            
+            const xArrowLeft = document.createElement('div');
+            xArrowLeft.className = 'arrow-head arrow-left';
+            xAxisArrow.appendChild(xArrowLeft);
+            
+            const xArrowRight = document.createElement('div');
+            xArrowRight.className = 'arrow-head arrow-right';
+            xAxisArrow.appendChild(xArrowRight);
+            
+            chartContainer.appendChild(xAxisArrow);
+            
+            const yAxisArrow = document.createElement('div');
+            yAxisArrow.className = 'axis-arrow y-axis-arrow';
+            
+            const yArrowTop = document.createElement('div');
+            yArrowTop.className = 'arrow-head arrow-top';
+            yAxisArrow.appendChild(yArrowTop);
+            
+            const yArrowBottom = document.createElement('div');
+            yArrowBottom.className = 'arrow-head arrow-bottom';
+            yAxisArrow.appendChild(yArrowBottom);
+            
+            chartContainer.appendChild(yAxisArrow);
+            
+            // Add pins for all players with appropriate filtering
+            const isFilteringByPlayer = gameState.selectedFilter !== 'all';
+            const selectedPlayer = isFilteringByPlayer ? gameState.selectedFilter : null;
+            
+            // Store pins by player for reference
+            const pinElements = {};
+            
+            // For each person, collect all placements made by others
+            gameState.players.forEach((person, personIndex) => {
+                const personColor = playerColors[personIndex % playerColors.length];
+                
+                // Store pins for this person
+                pinElements[person] = {};
+                
+                // Skip non-selected players if filtering is active
+                if (isFilteringByPlayer && person !== selectedPlayer) {
+                    // Add with reduced opacity
+                    gameState.players.forEach(placer => {
+                        const placement = gameState.placements[placer][person];
+                        if (!placement) return;
+                        
+                        const pin = document.createElement('div');
+                        pin.className = 'pin';
+                        pin.textContent = person; // Shows the person being placed
+                        pin.style.backgroundColor = personColor;
+                        pin.style.opacity = '0.2'; // Reduce opacity for non-selected players
+                        
+                        if (placer !== person) {
+                            pin.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                        }
+                        
+                        // Convert normalized position to pixels
+                        pin.style.left = `${placement.x * 100}%`;
+                        pin.style.top = `${placement.y * 100}%`;
+                        
+                        // Add click handler to bring to front
+                        pin.addEventListener('click', function() {
+                            bringPinToFront(this);
+                        });
+                        
+                        chartContainer.appendChild(pin);
+                    });
+                    
+                    return; // Skip to next person
+                }
+                
+                // For each player who placed this person
+                gameState.players.forEach(placer => {
+                    const placement = gameState.placements[placer][person];
+                    
+                    // Skip if no placement
+                    if (!placement) return;
+                    
+                    const pin = document.createElement('div');
+                    pin.className = 'pin';
+                    
+                    // When a specific player is selected, show the name of the placer on the pin
+                    if (isFilteringByPlayer && person === selectedPlayer) {
+                        pin.textContent = placer; // Show WHO placed this person
+                    } else {
+                        pin.textContent = person; // Otherwise, show the person being placed
+                    }
+                    
+                    pin.style.backgroundColor = personColor;
+                    
+                    // Styling for self-placement vs. placements by others
+                    if (placer === person) {
+                        pin.style.boxShadow = '0 0 0 3px white, 2px 2px 5px rgba(0, 0, 0, 0.3)';
+                        pin.style.zIndex = '20';
+                    } else {
+                        if (isFilteringByPlayer && person === selectedPlayer) {
+                            pin.style.zIndex = '15';
+                        } else {
+                            pin.style.opacity = '1.0';
+                            pin.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                        }
+                    }
+                    
+                    // Convert normalized position to pixels
+                    pin.style.left = `${placement.x * 100}%`;
+                    pin.style.top = `${placement.y * 100}%`;
+                    
+                    // Add click handler to bring to front
+                    pin.addEventListener('click', function() {
+                        bringPinToFront(this);
+                    });
+                    
+                    // Save reference for future use
+                    pinElements[person][placer] = pin;
+                    
+                    chartContainer.appendChild(pin);
+                });
+            });
+            
+            container.appendChild(chartContainer);
+            
+            // If a specific player is selected, show the scoreboard
+            if (isFilteringByPlayer) {
+                const selectedPlayer = gameState.selectedFilter;
+                const selfPlacement = gameState.placements[selectedPlayer][selectedPlayer];
+                
+                // Only show scoreboard if the player placed themselves
+                if (selfPlacement) {
+                    // Calculate scores for each player's placement of the selected player
+                    const playerScores = [];
+                    
+                    gameState.players.forEach(player => {
+                        // Skip self placement
+                        if (player === selectedPlayer) return;
+                        
+                        const placement = gameState.placements[player][selectedPlayer];
+                        if (!placement) return;
+                        
+                        // Calculate distance
+                        const distance = calculateDistance(selfPlacement, placement);
+                        
+                        // Calculate score (100 - distance * 100)
+                        const maxDistance = Math.sqrt(2); // Maximum possible distance in a 1x1 square
+                        const score = Math.max(0, Math.round(100 - (distance / maxDistance) * 100));
+                        
+                        playerScores.push({ player, score });
+                    });
+                    
+                    // Sort scores by highest first
+                    playerScores.sort((a, b) => b.score - a.score);
+                    
+                    // Create scoreboard
+                    const scoreboardContainer = document.createElement('div');
+                    scoreboardContainer.style.marginTop = '20px';
+                    scoreboardContainer.style.backgroundColor = '#f9f9f9';
+                    scoreboardContainer.style.padding = '12px';
+                    scoreboardContainer.style.borderRadius = '8px';
+                    scoreboardContainer.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    
+                    const scoreboardTitle = document.createElement('h4');
+                    scoreboardTitle.textContent = `Who knows ${selectedPlayer} best?`;
+                    scoreboardTitle.style.textAlign = 'center';
+                    scoreboardTitle.style.marginBottom = '12px';
+                    scoreboardTitle.style.color = '#4c2c69';
+                    scoreboardContainer.appendChild(scoreboardTitle);
+                    
+                    // Create table
+                    const scoreTable = document.createElement('table');
+                    scoreTable.style.width = '100%';
+                    
+                    // Create header
+                    const header = document.createElement('tr');
+                    
+                    const rankHeader = document.createElement('th');
+                    rankHeader.textContent = 'Rank';
+                    
+                    const playerHeader = document.createElement('th');
+                    playerHeader.textContent = 'Player';
+                    
+                    const scoreHeader = document.createElement('th');
+                    scoreHeader.textContent = 'Points';
+                    
+                    header.appendChild(rankHeader);
+                    header.appendChild(playerHeader);
+                    header.appendChild(scoreHeader);
+                    scoreTable.appendChild(header);
+                    
+                    // Add rows for each score
+                    playerScores.forEach((score, index) => {
+                        const row = document.createElement('tr');
+                        
+                        // Highlight best score
+                        if (index === 0) {
+                            row.classList.add('winner');
+                        }
+                        
+                        const rankCell = document.createElement('td');
+                        rankCell.textContent = index + 1;
+                        
+                        const playerCell = document.createElement('td');
+                        playerCell.textContent = score.player;
+                        
+                        const scoreCell = document.createElement('td');
+                        scoreCell.textContent = score.score + ' points';
+                        
+                        row.appendChild(rankCell);
+                        row.appendChild(playerCell);
+                        row.appendChild(scoreCell);
+                        scoreTable.appendChild(row);
+                    });
+                    
+                    scoreboardContainer.appendChild(scoreTable);
+                    container.appendChild(scoreboardContainer);
+                }
+            }
+        }
+
+        // Function to reset the game
+        function resetGame() {
+            // Reset game state
+            gameState.players = [];
+            gameState.currentTurn = 0;
+            gameState.placements = {};
+            gameState.selectedFilter = 'all';
+            
+            // Reset z-index counter
+            nextZIndex = 100;
+            
+            // Clear player list
+            playersList.innerHTML = '';
+            
+            // Reset UI
+            setupSection.style.display = 'block';
+            gameSection.style.display = 'none';
+            finalScoresSection.style.display = 'none';
+            
+            // Disable start game button
+            startGameButton.disabled = true;
+            
+            // Reset player name input
+            playerNameInput.value = '';
+            playerNameInput.focus();
+            
+            // Select new random axes
+            selectRandomAxes();
+        }
+
+        // Helper function to determine if text should be dark or light based on background color
+        function getContrastYIQ(hexcolor) {
+            // If hexcolor contains # at the beginning, remove it
+            if (hexcolor.charAt(0) === '#') {
+                hexcolor = hexcolor.substr(1);
+            }
+            
+            // Convert to RGB
+            const r = parseInt(hexcolor.substr(0, 2), 16);
+            const g = parseInt(hexcolor.substr(2, 2), 16);
+            const b = parseInt(hexcolor.substr(4, 2), 16);
+            
+            // Calculate YIQ ratio
+            return ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        }
+
+        // Event Listeners
+        addPlayerButton.addEventListener('click', addPlayer);
+        
+        playerNameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                addPlayer();
+            }
+        });
+        
+        clearPlayersButton.addEventListener('click', () => {
+            gameState.players = [];
+            updatePlayersList();
+            startGameButton.disabled = true;
+        });
+        
+        startGameButton.addEventListener('click', startGame);
+        
+        confirmPlacementButton.addEventListener('click', confirmPlacement);
+        
+        playAgainButton.addEventListener('click', resetGame);
+    </script>
+</body>
+</html>
