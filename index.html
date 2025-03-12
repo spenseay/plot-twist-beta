@@ -27,7 +27,7 @@
 
         /* Container for the game */
         .container {
-            max-width: 100%;
+            max-width: 800px; /* Limited overall width for all devices */
             margin: 0 auto;
             padding: 10px;
             background-color: white;
@@ -165,12 +165,12 @@
             margin-top: 20px;
         }
 
-        /* Graph styles - MOBILE OPTIMIZED */
+        /* Graph styles - OPTIMIZED FOR ALL DEVICES */
         #graph-container {
             position: relative;
             width: 100%;
-            max-width: 100%;
-            /* Responsive height based on viewport width */
+            max-width: 450px; /* Limit width on all screens */
+            /* Responsive height based on aspect ratio */
             aspect-ratio: 1 / 1;
             margin: 0 auto;
             border: 2px solid #4c2c69;
@@ -488,54 +488,54 @@
             color: #2a6b34;
         }
 
-        /* Responsive styles - ENHANCED */
+        /* Responsive styles - ENHANCED FOR ALL DEVICES */
         @media (min-width: 768px) {
-            /* Larger screens */
+            /* Larger screens (but still compact) */
             body {
-                padding: 20px;
+                padding: 15px;
             }
             
             .container {
-                max-width: 1000px;
-                padding: 20px;
+                max-width: 800px; /* Reduced from 1000px */
+                padding: 15px;
             }
             
             .section {
-                padding: 20px;
-                margin-bottom: 30px;
+                padding: 15px;
+                margin-bottom: 20px;
             }
             
             .axis-label {
-                font-size: 14px;
-                max-width: none;
+                font-size: 13px;
+                max-width: 90px; /* Still control width on desktop */
             }
             
             .pin {
-                font-size: 14px;
-                min-width: 80px;
-                padding: 8px 12px;
+                font-size: 13px;
+                min-width: 75px;
+                padding: 7px 10px;
             }
             
             .pins-container .pin {
-                height: 40px;
-                margin: 5px;
+                height: 36px;
+                margin: 4px;
             }
             
             #turn-indicator {
-                font-size: 24px;
+                font-size: 20px;
             }
             
             .instructions {
-                font-size: 16px;
+                font-size: 14px;
             }
             
             table {
-                font-size: 16px;
+                font-size: 14px;
             }
             
             .player-filter-button {
-                font-size: 14px;
-                padding: 8px 15px;
+                font-size: 13px;
+                padding: 6px 12px;
             }
         }
         
