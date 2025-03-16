@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { GameProvider } from '../contexts/GameContext';
-import SetupSection from '../components/SetupSection';
-import GameSection from '../components/GameSection';
-import FinalScoresSection from '../components/FinalScoresSection';
+import { GameProvider } from './contexts/GameContext';
+import SetupSection from './components/SetupSection';
+import GameSection from './components/GameSection';
+import FinalScoresSection from './components/FinalScoresSection';
 import './styles/index.css';
 
 function App() {
