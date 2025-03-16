@@ -1,0 +1,68 @@
+.pin {
+    position: absolute;
+    min-width: 70px;
+    padding: 6px 8px;
+    background-color: #fdc30f;
+    color: #4c2c69;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    transform: translate(-50%,-50%);
+    z-index: 10;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    user-select: none;
+    transition: opacity 0.3s, box-shadow 0.2s, transform 0.2s;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 12px;
+    border-radius: 2px;
+  }
+  
+  /* Unplaced pins in container */
+  .pins-container .pin {
+    position: relative;
+    transform: none;
+    margin: 3px;
+    display: inline-block;
+    height: 34px;
+    flex-grow: 0;
+  }
+  
+  .pin[data-placed="false"] {
+    box-shadow: 0 0 0 2px #db5461, 2px 2px 5px rgba(0,0,0,0.3);
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 2px #db5461; }
+    50% { box-shadow: 0 0 0 4px #db5461; }
+    100% { box-shadow: 0 0 0 2px #db5461; }
+  }
+  
+  .pin.unplaced {
+    box-shadow: 0 0 0 2px #db5461, 2px 2px 5px rgba(0,0,0,0.3);
+    animation: pulse 2s infinite;
+  }
+  
+  .pin:active, 
+  .pin.dragging {
+    cursor: grabbing;
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+    z-index: 1000;
+  }
+  
+  @media (min-width: 768px) {
+    .pin {
+      font-size: 13px;
+      min-width: 75px;
+      padding: 7px 10px;
+    }
+    
+    .pins-container .pin {
+      height: 36px;
+      margin: 4px;
+    }
+  }

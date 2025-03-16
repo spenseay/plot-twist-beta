@@ -1,0 +1,40 @@
+.collective-placements-chart {
+    margin-bottom: 20px;
+  }
+  
+  .chart-title {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #4c2c69;
+  }
+  
+  .chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    border: 2px solid #4c2c69;
+    border-radius: 4px;
+    background-color: white;
+  }
+  
+  /* We reuse the existing axis styling from GraphContainer.css */
+  /* And the existing pin styling from Pin.css */
+  
+  /* But we need to ensure pins in this chart are positioned absolutely */
+  .chart-container .pin {
+    position: absolute;
+    min-width: 70px;
+    padding: 6px 8px;
+    font-size: 12px;
+    transform: translate(-50%, -50%);
+  }
+  
+  @media (min-width: 768px) {
+    .chart-container .pin {
+      font-size: 13px;
+      min-width: 75px;
+      padding: 7px 10px;
+    }
+  }
