@@ -17,8 +17,22 @@ const PLAYER_COLORS = [
 const AXIS_OPTIONS = [
   { start: "High Five", end: "Fist Bump" },
   { start: "Couch Potato", end: "Touches Grass" },
-  { start: "Lights Candles", end: "Lights Bonfires" },
-  // Additional axis options would be here...
+  { start: "Lights Candles", end: "Lights Fires" },
+  { start: "Silent Sneezer", end: "Powerful Sneezer" },
+  { start: "Napkin User", end: "Sleeve Wiper" },
+  { start: "Shower Singer", end: "Shower Thinker" },
+  { start: "Spider Saver", end: "Spider Squisher" },
+  { start: "Movie Talker", end: "Shusher" },
+  { start: "Sock Shoe Sock Shoe", end: "Sock Sock Shoe Shoe" },
+  { start: "Bookworm", end: "Illiterate" },
+  { start: "Early Bird", end: "Night Owl" },
+  { start: "Window Seat", end: "Aisle Seat" },
+  { start: "One Tab Open", end: "100 Tabs Open" },
+  { start: "Punctual", end: "Fashionably Late" },
+  { start: "Cereal First", end: "Milk First" },
+  { start: "Full Tank", end: "Rides on Empty" },
+  { start: "Hard G in GIF", end: "Soft G in GIF" },
+  { start: "Slow Eater", end: "Speed Inhaler" },
   { start: "Power Walker", end: "Stroller" }
 ]
 
@@ -41,36 +55,43 @@ export function useGameState() {
   
   // Methods
   function addPlayer(name) {
-    if (!name.trim()) return false
-    if (players.value.includes(name)) return false
+    const trimmedName = name?.trim()
+    if (!trimmedName) return false
+    if (players.value.includes(trimmedName)) return false
     
-    players.value.push(name)
-    placements[name] = {}
+    players.value.push(trimmedName)
+    placements[trimmedName] = {}
     return true
   }
   
   function removePlayer(index) {
     const playerName = players.value[index]
-    players.value.splice(index, 1)
-    delete placements[playerName]
+    if (playerName) {
+      players.value.splice(index, 1)
+      delete placements[playerName]
+    }
   }
   
   function clearPlayers() {
     players.value = []
-    Object.keys(placements).forEach(key => {
+    for (const key in placements) {
       delete placements[key]
-    })
+    }
   }
   
   function randomizeAxes() {
+    // Create a new shuffled array from axisOptions
     const shuffled = [...AXIS_OPTIONS].sort(() => 0.5 - Math.random())
     
+    // Pick the first two for X and Y
     const xAxis = shuffled[0]
-    const yAxis = shuffled[1] || shuffled[0]
+    const yAxis = shuffled[1] || shuffled[0] // Fallback if we only have one option
     
+    // 50/50 chance to flip the direction of each axis
     const xSwap = Math.random() > 0.5
     const ySwap = Math.random() > 0.5
     
+    // Set the axes in gameState
     axes.x.start = xSwap ? xAxis.end : xAxis.start
     axes.x.end = xSwap ? xAxis.start : xAxis.end
     axes.y.start = ySwap ? yAxis.end : yAxis.start
@@ -89,7 +110,9 @@ export function useGameState() {
   
   function savePlacements(placementsForTurn) {
     const player = players.value[currentTurn.value]
-    placements[player] = { ...placementsForTurn }
+    if (player) {
+      placements[player] = { ...placementsForTurn }
+    }
   }
   
   function nextTurn() {
@@ -103,11 +126,13 @@ export function useGameState() {
     players.value.forEach(p => scores[p] = 0)
     
     players.value.forEach(person => {
-      const selfPlacement = placements[person][person]
+      const selfPlacement = placements[person]?.[person]
+      if (!selfPlacement) return
+      
       players.value.forEach(player => {
         if (player === person) return
-        const placement = placements[player][person]
-        if (!placement || !selfPlacement) return
+        const placement = placements[player]?.[person]
+        if (!placement) return
         
         const dist = calculateDistance(selfPlacement, placement)
         const maxDist = Math.sqrt(2)
@@ -126,15 +151,16 @@ export function useGameState() {
   function resetGame() {
     players.value = []
     currentTurn.value = 0
-    Object.keys(placements).forEach(key => {
+    for (const key in placements) {
       delete placements[key]
-    })
+    }
     selectedFilter.value = 'all'
     randomizeAxes()
   }
   
   // Helper functions
   function calculateDistance(a, b) {
+    if (!a || !b) return 0
     const dx = a.x - b.x
     const dy = a.y - b.y
     return Math.sqrt(dx*dx + dy*dy)
@@ -191,9 +217,6 @@ export function useGameState() {
     // Helpers
     calculateDistance,
     getPlayerColor,
-    getContrastColor,
-    
-    // Constants
-    PLAYER_COLORS
+    getContrastColor
   }
 }
