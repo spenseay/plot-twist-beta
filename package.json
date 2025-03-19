@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "dev": "vite --force --clearScreen false",
-  "build": "vite build",
-  "preview": "vite preview"
-},
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
     "path": "^0.12.7",
